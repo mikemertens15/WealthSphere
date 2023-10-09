@@ -1,42 +1,65 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(45deg, #00c9ff, #92fe9d);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.2); /* eh */
+  padding: 50px;
+  border-radius: 25px;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
 }
+
+.logo-container {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+.submit-button {
+  width: 300px;
+  padding: 15px 20px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  font-size: 18px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.submit-button:hover {
+  background-color: #45a049;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.text-field {
+  width: 300px;
+  padding: 15px 20px;
+  margin: 15px 0;
+  border: none;
+  border-radius: 25px;
+  outline: none;
+  background-color: #ffffff;
+  font-size: 18px;
 }
