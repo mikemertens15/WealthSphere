@@ -1,17 +1,13 @@
 import "./App.css";
-import Button from "./Components/Button";
-import TextField from "./Components/TextField";
-import Logo from "./Components/logo";
+import Logo from "./Components/Logo";
+import LoginForm from "./Components/LoginForm";
 
 function App() {
   return (
     <>
       <div className="login-screen">
         <Logo />
-        <TextField type="text" placeholder="email" />
-        <TextField type="password" placeholder="Password" />
-        <Button label="Log In" />
-        <Button label="Register" />
+        <LoginForm />
       </div>
     </>
   );
