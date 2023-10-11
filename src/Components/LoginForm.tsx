@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Logo from "./Logo";
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,8 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <Logo />
       <input
         type="email"
         className="text-field"
