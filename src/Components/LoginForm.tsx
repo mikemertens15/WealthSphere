@@ -16,7 +16,25 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(formData);
+
+    try {
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (data.user) {
+        localStorage.setItem("token", data.user);
+        alert("Login Successful");
+        // window.location.href = '/dashboard
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
