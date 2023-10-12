@@ -33,8 +33,6 @@ const RegistrationForm: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
       if (response.status === 200) {
         alert(
           "Registration Successful, please log in with your new credentials!"
