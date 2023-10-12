@@ -35,10 +35,11 @@ const RegistrationForm: React.FC = () => {
       });
 
       const data = await response.json();
-      if (data.user) {
-        localStorage.setItem("token", data.user);
-        alert("Registration Successful");
-        // window.location.href = '/dashboard // redirect to login screen to login, idk yet
+      if (response.status === 200) {
+        alert(
+          "Registration Successful, please log in with your new credentials!"
+        );
+        window.location.href = "/login";
       }
     } catch (err) {
       console.log(err);

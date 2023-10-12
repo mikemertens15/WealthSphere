@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
       if (data.user) {
         localStorage.setItem("token", data.user);
         alert("Login Successful");
-        // window.location.href = '/dashboard
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       console.log(err);
