@@ -36,7 +36,11 @@ const LoginForm: React.FC = () => {
       });
 
       const data = await response.json();
-      if (data.user) {
+      if (data.status === "error") {
+        alert(data.error);
+        return;
+      }
+      if (data.status === "success") {
         setUser(data.user);
         alert("Login Successful");
         navigate("/dashboard");
