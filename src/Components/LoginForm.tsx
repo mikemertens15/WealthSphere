@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 const LoginForm: React.FC = () => {
@@ -39,28 +40,35 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form className="login-form" onSubmit={handleSubmit}>
-      <Logo />
-      <input
-        type="email"
-        className="text-field"
-        placeholder="email"
-        name="email"
-        value={formData.email}
-        onChange={handleInputChange}
-      />
-      <input
-        type="password"
-        className="text-field"
-        placeholder="password"
-        name="password"
-        value={formData.password}
-        onChange={handleInputChange}
-      />
-      <button type="submit" className="submit-button">
-        Log In
-      </button>
-    </form>
+    <div>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <Logo />
+        <input
+          type="email"
+          className="text-field"
+          placeholder="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+        <input
+          type="password"
+          className="text-field"
+          placeholder="password"
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+        />
+        <button type="submit" className="submit-button">
+          Log In
+        </button>
+        <div className="register-message">
+          <p>
+            New User? <Link to="/register">Register Here</Link>{" "}
+          </p>
+        </div>
+      </form>
+    </div>
   );
 };
 
