@@ -42,6 +42,10 @@ const RegistrationForm: React.FC = () => {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+      if (data.status === "error") {
+        alert(data.error);
+        return;
+      }
       if (data.user) {
         setUser(data.user);
         alert("Registration Successful, Welcome!");
