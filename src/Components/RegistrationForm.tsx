@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Logo from "./Logo";
+import { UserContext } from "../Context/UserContext";
 
 const RegistrationForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("LoginForm must be used within a UserProvider");
+  }
+  const { setUser } = context;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -33,11 +41,11 @@ const RegistrationForm: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-      if (response.status === 200) {
-        alert(
-          "Registration Successful, please log in with your new credentials!"
-        );
-        window.location.href = "/login";
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user);
+        alert("Registration Successful, Welcome!");
+        navigate("/dashboard");
       }
     } catch (err) {
       console.log(err);
