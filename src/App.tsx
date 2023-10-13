@@ -1,21 +1,36 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router";
+
+import { UserProvider } from "./Context/UserContext";
 
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
 import Dashboard from "./Components/Dashboard";
+import React from "react";
 
 function App() {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (window.location.pathname === "/") {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   return (
     <>
       <div>
-        <BrowserRouter>
+        <UserProvider>
           <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Outlet />}>
+              <Route index element={<LoginForm />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegistrationForm />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
           </Routes>
-        </BrowserRouter>
+        </UserProvider>
       </div>
     </>
   );

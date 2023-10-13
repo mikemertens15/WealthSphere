@@ -1,12 +1,19 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../Context/UserContext";
 import Logo from "./Logo";
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("LoginForm must be used within a UserProvider");
+  }
+  const { setUser } = context;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -30,9 +37,9 @@ const LoginForm: React.FC = () => {
 
       const data = await response.json();
       if (data.user) {
-        localStorage.setItem("token", data.user);
+        setUser(data.user);
         alert("Login Successful");
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
     } catch (err) {
       console.log(err);
