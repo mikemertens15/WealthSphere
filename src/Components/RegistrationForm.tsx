@@ -46,8 +46,13 @@ const RegistrationForm: React.FC = () => {
         alert(data.error);
         return;
       }
-      if (data.user) {
-        setUser(data.user);
+      if (data) {
+        const user = {
+          name: data.name,
+          email: data.email,
+          items: data.items,
+        };
+        setUser(user);
         alert("Registration Successful, Welcome!");
         navigate("/dashboard");
       }

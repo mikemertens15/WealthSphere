@@ -41,7 +41,12 @@ const LoginForm: React.FC = () => {
         return;
       }
       if (data.status === "success") {
-        setUser(data.user);
+        const user = {
+          name: data.name,
+          email: data.email,
+          items: data.items,
+        };
+        setUser(user);
         alert("Login Successful");
         navigate("/dashboard");
       }
