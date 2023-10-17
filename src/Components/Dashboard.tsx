@@ -39,9 +39,8 @@ const Dashboard: React.FC = () => {
     );
     const data = await response.json();
     setTransactions(data);
-  }, []);
+  }, [user]);
 
-  const isOauth = false;
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
       async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
@@ -65,7 +64,7 @@ const Dashboard: React.FC = () => {
           setAccountLinked(true);
         }
       },
-      []
+      [addItemToUser, user]
     ),
     onExit: (err, metadata) => {
       if (err) {
@@ -86,10 +85,10 @@ const Dashboard: React.FC = () => {
     if (linkToken == null) {
       createLinkToken();
     }
-    if (isOauth && ready) {
-      open();
-    }
-  }, []);
+    // if (isOauth && ready) {
+    //   open();
+    // }
+  }, [createLinkToken, linkToken]);
 
   return (
     <div>
