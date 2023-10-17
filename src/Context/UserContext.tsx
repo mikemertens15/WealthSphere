@@ -1,12 +1,12 @@
 import React, { createContext, useState, ReactNode } from "react";
 
-interface User {
+export interface User {
   name: string;
   email: string;
-  items: [string];
+  items: string[];
 }
 
-interface UserContextProps {
+export interface UserContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   addItemToUser: (itemId: string) => void;

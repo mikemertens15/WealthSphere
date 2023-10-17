@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { User, UserContextProps } from "../Context/UserContext";
 import {
   usePlaidLink,
   PlaidLinkOptions,
@@ -6,7 +7,12 @@ import {
   PlaidLinkOnSuccessMetadata,
 } from "react-plaid-link";
 
-export const usePlaidConfig = (user, addItemToUser, linkToken) => {
+export const usePlaidConfig = (
+  user: User | null,
+  addItemToUser: UserContextProps["addItemToUser"],
+  linkToken: string | null
+) => {
+  // need to protect against the linkToken being null
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
       async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {

@@ -8,8 +8,6 @@ import { useFetchTransactions } from "../Hooks/useFetchTransactions";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
 
 const Dashboard: React.FC = () => {
-  // const [transactions, setTransactions] = useState(null);
-  // const [linkToken, setLinkToken] = useState(null);
   const navigate = useNavigate();
   const context = useContext(UserContext);
   if (!context) {
@@ -41,17 +39,12 @@ const Dashboard: React.FC = () => {
     <div>
       <h1>Welcome Back, {user ? user.name : "user is not defined"}</h1>
       <button onClick={() => navigate("/login")}>Log Out</button>
-      <br />
-      <br />
       <button onClick={() => open()} disabled={!ready}>
         Link Account
       </button>
-      <br />
-      <br />
       {accountLinked && (
         <>
           <button onClick={fetchTransactions}>Get Transactions</button>
-          <br />
           {transactions && <Transactions />}
         </>
       )}
