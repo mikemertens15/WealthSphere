@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
+import Transactions from "./Transactions";
 import {
   usePlaidLink,
   PlaidLinkOptions,
@@ -105,7 +106,7 @@ const Dashboard: React.FC = () => {
         <>
           <button onClick={fetchTransactions}>Get Transactions</button>
           <br />
-          {transactions && <pre>{JSON.stringify(transactions, null, 2)}</pre>}
+          {transactions && <Transactions />}
         </>
       )}
     </div>
