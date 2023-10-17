@@ -67,12 +67,20 @@ const Dashboard: React.FC = () => {
       },
       []
     ),
-    onExit: (err, metadata) => {},
-    onEvent: (eventName, metadata) => {},
+    onExit: (err, metadata) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(metadata);
+      }
+    },
+    onEvent: (eventName, metadata) => {
+      console.log(eventName, metadata);
+    },
     token: linkToken,
   };
 
-  const { open, exit, ready } = usePlaidLink(config);
+  const { open, ready } = usePlaidLink(config);
 
   useEffect(() => {
     if (linkToken == null) {
