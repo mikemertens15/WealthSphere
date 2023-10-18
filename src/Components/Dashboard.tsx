@@ -6,6 +6,7 @@ import Transactions from "./Transactions";
 import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
 import { useFetchTransactions } from "../Hooks/useFetchTransactions";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
+import Navbar from "./Navbar";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Welcome Back, {user ? user.name : "user is not defined"}</h1>
       <button onClick={() => navigate("/login")}>Log Out</button>
       <button onClick={() => open()} disabled={!ready}>
