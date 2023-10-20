@@ -7,6 +7,7 @@ import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
 import { useFetchTransactions } from "../Hooks/useFetchTransactions";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
 import Navbar from "./Navbar";
+import { useFetchBalance } from "../Hooks/useFetchBalance";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Dashboard: React.FC = () => {
   const [accountLinked, setAccountLinked] = useState<boolean>(false); // needs to come from the user context
   const { linkToken, createLinkToken } = useCreateLinkToken();
   const { transactions, fetchTransactions } = useFetchTransactions(user);
+  const { balance, fetchBalance } = useFetchBalance(user);
   const { open, ready } = usePlaidConfig(user, addItemToUser, linkToken);
 
   useEffect(() => {
@@ -47,6 +49,8 @@ const Dashboard: React.FC = () => {
       {accountLinked && (
         <>
           <button onClick={fetchTransactions}>Get Transactions</button>
+          <button onClick={fetchBalance}>Get Balance</button>
+          {balance && <pre>{JSON.stringify(balance, null, 2)}</pre>}
           {transactions && <Transactions />}
         </>
       )}
