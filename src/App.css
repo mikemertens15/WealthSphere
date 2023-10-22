@@ -70,6 +70,14 @@ body {
   font-size: 18px;
 }
 
+.widgets {
+  background-color: purple;
+}
+
+.balance-widget {
+  background-color: black;
+}
+
 .transactions-widget {
   background-color: #45a049;
 }

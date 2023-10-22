@@ -8,6 +8,7 @@ import { useFetchTransactions } from "../Hooks/useFetchTransactions";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
 import Navbar from "./Navbar";
 import { useFetchBalance } from "../Hooks/useFetchBalance";
+import Balance from "./Balance";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -50,8 +51,10 @@ const Dashboard: React.FC = () => {
         <>
           <button onClick={fetchTransactions}>Get Transactions</button>
           <button onClick={fetchBalance}>Get Balance</button>
-          {balance && <pre>{JSON.stringify(balance, null, 2)}</pre>}
-          {transactions && <Transactions />}
+          <div className="widgets">
+            {balance && <Balance balanceData={balance} />}
+            {transactions && <Transactions />}
+          </div>
         </>
       )}
     </div>
