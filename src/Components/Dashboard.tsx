@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import Button from "@mui/material/Button";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Transactions from "./Transactions";
@@ -49,7 +50,9 @@ const Dashboard: React.FC = () => {
     <div>
       <Navbar />
       <h1>Welcome Back, {user ? user.name : "user is not defined"}</h1>
-      <button onClick={() => navigate("/login")}>Log Out</button>
+      <Button variant="contained" onClick={() => navigate("/login")}>
+        Log Out
+      </Button>
       <button onClick={() => open()} disabled={!ready}>
         Link Account
       </button>
