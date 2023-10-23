@@ -17,7 +17,13 @@ const Dashboard: React.FC = () => {
     throw new Error("Dashboard must be within a UserProvider");
   }
 
-  const { user, addItemToUser } = context;
+  const { user, addItemToUser, setUser } = context;
+  setUser({
+    name: "Mik",
+    email: "admin@admin.com",
+    items: ["KjLDoXM39PsqVxzRnj7bu9mJbmb7bkURMeDlk"],
+  });
+
   const [accountLinked, setAccountLinked] = useState<boolean>(false); // needs to come from the user context
   const { linkToken, createLinkToken } = useCreateLinkToken();
   const { transactions, fetchTransactions } = useFetchTransactions(user);

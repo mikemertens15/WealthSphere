@@ -14,7 +14,7 @@ function App() {
 
   React.useEffect(() => {
     if (window.location.pathname === "/") {
-      navigate("/login");
+      navigate("/dashboard");
     }
   }, [navigate]);
 
@@ -24,7 +24,7 @@ function App() {
         <UserProvider>
           <Routes>
             <Route path="/" element={<Outlet />}>
-              <Route index element={<LoginForm />} />
+              <Route index element={<Dashboard />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegistrationForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
