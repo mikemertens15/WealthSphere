@@ -9,13 +9,13 @@ import {
   Avatar,
 } from "@mui/material";
 import { UserContext } from "../Context/UserContext";
-import Copyright from "./Copyright";
+import Copyright from "../Components/Copyright";
 
-const RegistrationForm: React.FC = () => {
+const RegistrationPage: React.FC = () => {
   const navigate = useNavigate();
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("LoginForm must be used within a UserProvider");
+    throw new Error("RegistrationPage must be used within a UserProvider");
   }
   const { setUser } = context;
 
@@ -139,4 +139,4 @@ const RegistrationForm: React.FC = () => {
   );
 };
 
-export default RegistrationForm;
+export default RegistrationPage;

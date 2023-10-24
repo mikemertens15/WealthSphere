@@ -2,14 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
-import Transactions from "./Transactions";
+import Transactions from "../Components/Transactions";
 
 import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
 import { useFetchTransactions } from "../Hooks/useFetchTransactions";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
-import Navbar from "./Navbar";
+import Navbar from "../Components/Navbar";
 import { useFetchBalance } from "../Hooks/useFetchBalance";
-import Balance from "./Balance";
+import Balance from "../Components/Balance";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();

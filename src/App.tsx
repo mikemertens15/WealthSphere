@@ -8,9 +8,9 @@ import { useNavigate } from "react-router";
 
 import { UserProvider } from "./Context/UserContext";
 
-import LoginForm from "./Components/LoginForm";
-import RegistrationForm from "./Components/RegistrationForm";
-import Dashboard from "./Components/Dashboard";
+import LoginPage from "./Pages/LoginPage";
+import RegistrationPage from "./Pages/RegistrationPage";
+import Dashboard from "./Pages/Dashboard";
 import React from "react";
 
 function App() {
@@ -29,8 +29,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Outlet />}>
               <Route index element={<Dashboard />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/register" element={<RegistrationForm />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegistrationPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
             </Route>
           </Routes>

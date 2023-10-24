@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 
 import { UserContext } from "../Context/UserContext";
-import Copyright from "./Copyright";
+import Copyright from "../Components/Copyright";
 
-const LoginForm: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("LoginForm must be used within a UserProvider");
+    throw new Error("LoginPage must be used within a UserProvider");
   }
   const { setUser } = context;
 
@@ -126,4 +126,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default LoginPage;
