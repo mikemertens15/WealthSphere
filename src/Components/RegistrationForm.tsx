@@ -1,34 +1,35 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "./Logo";
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+} from "@mui/material";
 import { UserContext } from "../Context/UserContext";
+import Copyright from "./Copyright";
 
 const RegistrationForm: React.FC = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("LoginForm must be used within a UserProvider");
   }
   const { setUser } = context;
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const userToRegister = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    };
 
-    if (formData.confirmPassword !== formData.password) {
+    if (userToRegister.confirmPassword !== userToRegister.password) {
       alert("Passwords do not match! Please try again");
       return;
     }
@@ -39,7 +40,7 @@ const RegistrationForm: React.FC = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(userToRegister),
       });
       const data = await response.json();
       if (data.status === "error") {
@@ -62,44 +63,75 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <form className="login-form" onSubmit={handleSubmit}>
-      <Logo />
-      <input
-        type="text"
-        className="text-field"
-        placeholder="Your name"
-        name="name"
-        value={formData.name}
-        onChange={handleInputChange}
-      />
-      <input
-        type="email"
-        className="text-field"
-        placeholder="email"
-        name="email"
-        value={formData.email}
-        onChange={handleInputChange}
-      />
-      <input
-        type="password"
-        className="text-field"
-        placeholder="password"
-        name="password"
-        value={formData.password}
-        onChange={handleInputChange}
-      />
-      <input
-        type="password"
-        className="text-field"
-        placeholder="Confirm Password"
-        name="confirmPassword"
-        value={formData.confirmPassword}
-        onChange={handleInputChange}
-      />
-      <button type="submit" className="submit-button">
-        Register
-      </button>
-    </form>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Avatar
+          sx={{ m: 1, width: 100, height: 100, bgcolor: "secondary.main" }}
+          src="/wealthsphere-logo-maybe.png"
+        />
+        <Typography component="h1" variant="h5">
+          Welcome! Please Create an Account:
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="name"
+            id="name"
+            label="Name"
+            autoComplete="name"
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="email"
+            id="email"
+            label="Email Address"
+            autoComplete="email"
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            id="password"
+            label="Password"
+            autoComplete="current-password"
+            type="password"
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            id="confirmPassword"
+            label="Confirm Password"
+            autoComplete="confirmPassword"
+            type="password"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Register
+          </Button>
+        </Box>
+      </Box>
+      <Copyright sx={{ mt: 8, mb: 4 }} />
+    </Container>
   );
 };
 

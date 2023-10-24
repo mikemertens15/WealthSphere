@@ -1,6 +1,9 @@
-import { Link, Typography } from "@mui/material";
+import { Link, Typography, TypographyProps } from "@mui/material";
+import { SystemProps } from "@mui/system";
 
-const Copyright: React.FC = (props: any) => {
+type CopyrightProps = TypographyProps & { sx?: SystemProps };
+
+const Copyright: React.FC<CopyrightProps> = (props) => {
   return (
     <Typography
       variant="body2"
