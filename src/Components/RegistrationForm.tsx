@@ -84,6 +84,7 @@ const RegistrationForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="name"
             id="name"
             label="Name"
@@ -94,6 +95,7 @@ const RegistrationForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="email"
             id="email"
             label="Email Address"
@@ -104,6 +106,7 @@ const RegistrationForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="password"
             id="password"
             label="Password"
@@ -114,6 +117,7 @@ const RegistrationForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="confirmPassword"
             id="confirmPassword"
             label="Confirm Password"

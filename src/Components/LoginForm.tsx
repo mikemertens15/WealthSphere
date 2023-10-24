@@ -81,6 +81,7 @@ const LoginForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="email"
             id="email"
             label="email address"
@@ -91,6 +92,7 @@ const LoginForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
+            variant="filled"
             name="password"
             id="password"
             label="password"
