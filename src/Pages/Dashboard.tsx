@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Transactions from "../Components/Transactions";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
 import { useFetchTransactions } from "../Hooks/useFetchTransactions";
@@ -10,6 +11,7 @@ import { usePlaidConfig } from "../Hooks/usePlaidConfig";
 import Navbar from "../Components/Navbar";
 import { useFetchBalance } from "../Hooks/useFetchBalance";
 import Balance from "../Components/Balance";
+import { Box, Container, CssBaseline, Grid, Paper } from "@mui/material";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -19,11 +21,11 @@ const Dashboard: React.FC = () => {
   }
 
   const { user, addItemToUser, setUser } = context;
-  setUser({
-    name: "Mik",
-    email: "admin@admin.com",
-    items: ["KjLDoXM39PsqVxzRnj7bu9mJbmb7bkURMeDlk"],
-  });
+  // setUser({
+  //   name: "Mik",
+  //   email: "admin@admin.com",
+  //   items: ["KjLDoXM39PsqVxzRnj7bu9mJbmb7bkURMeDlk"],
+  // });
 
   const [accountLinked, setAccountLinked] = useState<boolean>(false); // needs to come from the user context
   const { linkToken, createLinkToken } = useCreateLinkToken();
@@ -47,26 +49,31 @@ const Dashboard: React.FC = () => {
   }, [createLinkToken, linkToken]);
 
   return (
-    <div>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
       <Navbar />
-      <h1>Welcome Back, {user ? user.name : "user is not defined"}</h1>
-      <Button variant="contained" onClick={() => navigate("/login")}>
-        Log Out
-      </Button>
-      <button onClick={() => open()} disabled={!ready}>
-        Link Account
-      </button>
-      {accountLinked && (
-        <>
-          <button onClick={fetchTransactions}>Get Transactions</button>
-          <button onClick={fetchBalance}>Get Balance</button>
-          <div className="widgets">
-            {balance && <Balance balanceData={balance} />}
-            {transactions && <Transactions />}
-          </div>
-        </>
-      )}
-    </div>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, height: "100vh", overflow: "auto" }}
+      >
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 240,
+                }}
+              >
+                Hello
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 
