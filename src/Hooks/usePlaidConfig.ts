@@ -52,6 +52,6 @@ export const usePlaidConfig = (
   };
 
   const { open, ready } = usePlaidLink(config);
-
-  return { open, ready };
+  const openPlaid = open;
+  return { openPlaid, ready };
 };

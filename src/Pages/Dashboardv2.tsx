@@ -13,15 +13,19 @@ import {
   Container,
   Grid,
   Paper,
+  Button,
 } from "@mui/material";
-import { ChevronLeft, Menu, Logout } from "@mui/icons-material";
+import { ChevronLeft, Menu, Logout, Add } from "@mui/icons-material";
 import { mainListItems } from "../Components/Dashboard/listItems";
 import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import Copyright from "../Components/Copyright";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
+import { UserContext } from "../Context/UserContext";
+import { usePlaidConfig } from "../Hooks/usePlaidConfig";
 
 const drawerWidth: number = 240;
 
@@ -77,10 +81,25 @@ const defaultTheme = createTheme();
 
 export default function DashboardV2() {
   const navigate = useNavigate();
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("Dashboard must be within a userProvider!");
+  }
+  const { user, addItemToUser } = context;
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const { linkToken, createLinkToken } = useCreateLinkToken();
+  const { openPlaid, ready } = usePlaidConfig(user, addItemToUser, linkToken);
+
+  useEffect(() => {
+    if (ready) {
+      openPlaid();
+    } else {
+      console.log("openPlaid useEffect ran but is not ready");
+    }
+  }, [ready, openPlaid, linkToken]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -90,6 +109,9 @@ export default function DashboardV2() {
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
             <IconButton
@@ -111,8 +133,16 @@ export default function DashboardV2() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              {user ? user.name : "undefined"}'s Dashboard
             </Typography>
+            <Button
+              variant="text"
+              onClick={() => createLinkToken()}
+              endIcon={<Add />}
+              sx={{ color: "white" }}
+            >
+              Add Account
+            </Button>
             <IconButton onClick={() => navigate("/login")} color="inherit">
               <Logout />
             </IconButton>
