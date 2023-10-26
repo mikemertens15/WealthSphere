@@ -11,7 +11,7 @@ import { UserProvider } from "./Context/UserContext";
 import LoginPage from "./Pages/LoginPage";
 import RegistrationPage from "./Pages/RegistrationPage";
 import Dashboard from "./Pages/Dashboard";
-import DashboardV2 from "./Pages/Dashboardv2";
+import DashboardV2 from "./Pages/Dashboard";
 import React from "react";
 
 function App() {
