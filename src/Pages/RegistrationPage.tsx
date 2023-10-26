@@ -63,7 +63,18 @@ const RegistrationPage: React.FC = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 3,
+      }}
+    >
       <Box
         sx={{
           marginTop: 8,

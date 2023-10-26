@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
-import Transactions from "../Components/Transactions";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
@@ -47,34 +46,6 @@ const Dashboard: React.FC = () => {
     //   open();
     // }
   }, [createLinkToken, linkToken]);
-
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <Navbar />
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, height: "100vh", overflow: "auto" }}
-      >
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  height: 240,
-                }}
-              >
-                Hello
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-    </Box>
-  );
 };
 
 export default Dashboard;

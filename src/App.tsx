@@ -11,6 +11,7 @@ import { UserProvider } from "./Context/UserContext";
 import LoginPage from "./Pages/LoginPage";
 import RegistrationPage from "./Pages/RegistrationPage";
 import Dashboard from "./Pages/Dashboard";
+import DashboardV2 from "./Pages/Dashboardv2";
 import React from "react";
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegistrationPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<DashboardV2 />} />
             </Route>
           </Routes>
         </UserProvider>
