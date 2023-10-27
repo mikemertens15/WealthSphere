@@ -1,8 +1,19 @@
-import { Button, IconButton, Toolbar, Typography, styled } from "@mui/material";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import MenuIcon from "@mui/icons-material/Menu";
+import {
+  AppBar as MuiAppBar,
+  AppBarProps as MuiAppBarProps,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { Menu, Logout, Add } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
+import { usePlaidConfig } from "../Hooks/usePlaidConfig";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../Context/UserContext";
+import React from "react";
 
 const drawerWidth: number = 240;
 
@@ -28,39 +39,77 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Navbar: React.FC = () => {
-  const [open, setOpen] = useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+interface AppBarComponentProps {
+  open: boolean;
+  toggleDrawer: () => void;
+}
+
+const AppBarComponent: React.FC<AppBarComponentProps> = ({
+  open,
+  toggleDrawer,
+}) => {
   const navigate = useNavigate();
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("Appbar must be within UserProvider");
+  }
+  const { user, addItemToUser } = context;
+  const { linkToken, createLinkToken } = useCreateLinkToken();
+  const { openPlaid, ready } = usePlaidConfig(user, addItemToUser, linkToken);
+
+  useEffect(() => {
+    if (ready) {
+      openPlaid();
+    } else {
+      console.log("openPlaid useEffect ran but is not ready");
+    }
+  }, [ready, openPlaid, linkToken]);
+
   return (
-    <AppBar position="absolute">
-      <Toolbar>
+    <AppBar position="absolute" open={open}>
+      <Toolbar
+        sx={{
+          pr: "24px", // keep right padding when drawer closed
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <IconButton
-          onClick={toggleDrawer}
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          sx={{ mr: 2 }}
+          onClick={toggleDrawer}
+          sx={{
+            marginRight: "36px",
+            ...(open && { display: "none" }),
+          }}
         >
-          <MenuIcon />
+          <Menu />
         </IconButton>
         <Typography
-          variant="h6"
           component="h1"
+          variant="h6"
           color="inherit"
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          Dashboard
+          {user ? user.name : "undefined"}'s Dashboard
         </Typography>
-        <Button color="inherit" onClick={() => navigate("/login")}>
-          Log Out
+        <Button
+          variant="text"
+          onClick={() => createLinkToken()}
+          endIcon={<Add />}
+          sx={{ color: "white" }}
+        >
+          Add Account
         </Button>
+        <IconButton onClick={() => navigate("/login")} color="inherit">
+          <Logout />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );
 };
 
-export default Navbar;
+export default AppBarComponent;
