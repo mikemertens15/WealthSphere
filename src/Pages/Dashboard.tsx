@@ -11,22 +11,39 @@ import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import Copyright from "../Components/Copyright";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import axios from "axios";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/Navbar";
 import DrawerComponent from "../Components/Drawer";
 
 const defaultTheme = createTheme();
 
-export default function DashboardV2() {
+// TODO: Add persistance so logged in user isn't lost on refresh
+
+export default function Dashboard() {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Dashboard must be within a userProvider!");
   }
+
+  const { user } = context;
   const [open, setOpen] = React.useState(false);
+  const [netWorth, setNetWorth] = React.useState(null);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3001/api/get_dashboard_data?email=${user?.email}`)
+      .then((response) => {
+        setNetWorth(response.data.netWorth);
+      })
+      .catch((error) => {
+        console.log("Error fetching net worth: " + error);
+      });
+  }, [user]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -72,7 +89,7 @@ export default function DashboardV2() {
                     height: 240,
                   }}
                 >
-                  <NetWorth />
+                  <NetWorth netWorth={netWorth} />
                 </Paper>
               </Grid>
               {/* Recent Transactions */}

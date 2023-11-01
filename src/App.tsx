@@ -10,7 +10,6 @@ import { UserProvider } from "./Context/UserContext";
 import LoginPage from "./Pages/LoginPage";
 import RegistrationPage from "./Pages/RegistrationPage";
 import Dashboard from "./Pages/Dashboard";
-import DashboardV2 from "./Pages/Dashboard";
 import React from "react";
 
 function App() {
@@ -18,7 +17,7 @@ function App() {
 
   React.useEffect(() => {
     if (window.location.pathname === "/") {
-      navigate("/dashboard");
+      navigate("/login");
     }
   }, [navigate]);
 
@@ -28,10 +27,10 @@ function App() {
         <UserProvider>
           <Routes>
             <Route path="/" element={<Outlet />}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegistrationPage />} />
-              <Route path="/dashboard" element={<DashboardV2 />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Route>
           </Routes>
         </UserProvider>

@@ -7,12 +7,18 @@ function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function NetWorth() {
+interface NetWorthProps {
+  netWorth: number | null;
+}
+
+const NetWorth: React.FC<NetWorthProps> = ({ netWorth }) => {
   return (
     <React.Fragment>
       <Title>Net Worth</Title>
       <Typography component="p" variant="h4">
-        $ net worth here
+        {netWorth
+          ? "$" + netWorth
+          : "No accounts Linked! Please link an account"}
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
         last updated here?
@@ -24,4 +30,6 @@ export default function NetWorth() {
       </div>
     </React.Fragment>
   );
-}
+};
+
+export default NetWorth;
