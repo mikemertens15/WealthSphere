@@ -22,7 +22,7 @@ const defaultTheme = createTheme();
 
 // TODO: Add persistance so logged in user isn't lost on refresh
 
-export default function Dashboard() {
+const Dashboard: React.FC = () => {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Dashboard must be within a userProvider!");
@@ -118,4 +118,6 @@ export default function Dashboard() {
       </Box>
     </ThemeProvider>
   );
-}
+};
+
+export default Dashboard;
