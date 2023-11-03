@@ -16,6 +16,7 @@ import axios from "axios";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/Navbar";
 import DrawerComponent from "../Components/Drawer";
+import Link from "@mui/material/Link";
 
 const defaultTheme = createTheme();
 
@@ -30,6 +31,8 @@ export default function Dashboard() {
   const { user } = context;
   const [open, setOpen] = React.useState(false);
   const [netWorth, setNetWorth] = React.useState(null);
+  const [recentTransactions, setRecentTransactions] = React.useState([]);
+  const [userHasBudget, setUserHasBudget] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -39,6 +42,8 @@ export default function Dashboard() {
       .get(`http://localhost:3001/api/get_dashboard_data?email=${user?.email}`)
       .then((response) => {
         setNetWorth(response.data.netWorth);
+        setRecentTransactions(response.data.recentTransactions);
+        setUserHasBudget(response.data.budget);
       })
       .catch((error) => {
         console.log("Error fetching net worth: " + error);
@@ -76,7 +81,15 @@ export default function Dashboard() {
                     height: 240,
                   }}
                 >
-                  <Budget />
+                  {userHasBudget ? (
+                    <Budget />
+                  ) : (
+                    <Link color="primary" href="#">
+                      {" "}
+                      {/* Style this somehow */}
+                      Create a Budget!
+                    </Link>
+                  )}
                 </Paper>
               </Grid>
               {/* Net Worth */}
@@ -95,7 +108,7 @@ export default function Dashboard() {
               {/* Recent Transactions */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Transactions />
+                  <Transactions recentTransactions={recentTransactions} />
                 </Paper>
               </Grid>
             </Grid>

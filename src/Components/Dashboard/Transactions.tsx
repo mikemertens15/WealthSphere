@@ -7,66 +7,23 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number
-) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+interface TransactionsProps {
+  recentTransactions: {
+    _id: string;
+    amount: number;
+    accountName: string;
+    category: string;
+    date: string;
+    merchant_name: string;
+    plaidItem: string;
+  }[];
 }
-
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Stop & Shop",
-    "Groceries",
-    "Chase Checking",
-    210.14
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "AMC Corp",
-    "Movies & Entertainment",
-    "Amex Gold Card",
-    45.48
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Walmart",
-    "Groceries & Shopping",
-    "Amex Gold Card",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "PSEG LI",
-    "Utilities - Power",
-    "Chase Checking",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Payment -- THANK YOU",
-    "Credit card payment",
-    "Chase Checking",
-    212.79
-  ),
-];
 
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function Transactions() {
+const Transactions: React.FC<TransactionsProps> = ({ recentTransactions }) => {
   return (
     <React.Fragment>
       <Title>Recent Transactions</Title>
@@ -81,13 +38,13 @@ export default function Transactions() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+          {recentTransactions.map((transaction) => (
+            <TableRow key={transaction._id}>
+              <TableCell>{transaction.date}</TableCell>
+              <TableCell>{transaction.merchant_name}</TableCell>
+              <TableCell>{transaction.category}</TableCell>
+              <TableCell>{transaction.accountName}</TableCell>
+              <TableCell align="right">{`$${transaction.amount}`}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -97,4 +54,6 @@ export default function Transactions() {
       </Link>
     </React.Fragment>
   );
-}
+};
+
+export default Transactions;
