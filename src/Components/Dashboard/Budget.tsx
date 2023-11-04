@@ -7,6 +7,7 @@ import {
   YAxis,
   Label,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import Title from "./Title";
 
@@ -25,8 +26,14 @@ const data = [
   createData("30", 2400),
 ];
 
-export default function Budget() {
+interface BudgetProps {
+  income: number;
+}
+
+const Budget: React.FC<BudgetProps> = ({ income }) => {
   const theme = useTheme();
+
+  const spendingCap = income;
 
   return (
     <React.Fragment>
@@ -62,6 +69,7 @@ export default function Budget() {
               Total Spent ($)
             </Label>
           </YAxis>
+          <ReferenceLine y={spendingCap} stroke="red" strokeDasharray="3 3" />
           <Line
             isAnimationActive={false}
             type="monotone"
@@ -73,4 +81,6 @@ export default function Budget() {
       </ResponsiveContainer>
     </React.Fragment>
   );
-}
+};
+
+export default Budget;

@@ -33,6 +33,7 @@ const Dashboard: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [netWorth, setNetWorth] = React.useState(null);
   const [recentTransactions, setRecentTransactions] = React.useState([]);
+  const [income, setIncome] = React.useState(0);
   const [userHasBudget, setUserHasBudget] = React.useState(false);
   const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
   const toggleDrawer = () => {
@@ -54,6 +55,7 @@ const Dashboard: React.FC = () => {
         setNetWorth(response.data.netWorth);
         setRecentTransactions(response.data.recentTransactions);
         setUserHasBudget(response.data.budget.hasBudget);
+        setIncome(response.data.budget.income);
       })
       .catch((error) => {
         console.log("Error fetching net worth: " + error);
@@ -92,7 +94,7 @@ const Dashboard: React.FC = () => {
                   }}
                 >
                   {userHasBudget ? (
-                    <Budget />
+                    <Budget income={income} />
                   ) : (
                     <Link
                       color="primary"
