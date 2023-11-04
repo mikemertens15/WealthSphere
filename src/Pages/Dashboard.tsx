@@ -17,6 +17,7 @@ import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/Navbar";
 import DrawerComponent from "../Components/Drawer";
 import Link from "@mui/material/Link";
+import BudgetSetupWizard from "../Components/BudgetSetupWizard";
 
 const defaultTheme = createTheme();
 
@@ -33,8 +34,17 @@ const Dashboard: React.FC = () => {
   const [netWorth, setNetWorth] = React.useState(null);
   const [recentTransactions, setRecentTransactions] = React.useState([]);
   const [userHasBudget, setUserHasBudget] = React.useState(false);
+  const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleOpenSetupWizard = () => {
+    setSetupWizardOpen(true);
+  };
+
+  const handleCloseSetupWizard = () => {
+    setSetupWizardOpen(false);
   };
 
   useEffect(() => {
@@ -43,7 +53,7 @@ const Dashboard: React.FC = () => {
       .then((response) => {
         setNetWorth(response.data.netWorth);
         setRecentTransactions(response.data.recentTransactions);
-        setUserHasBudget(response.data.budget);
+        setUserHasBudget(response.data.budget.hasBudget);
       })
       .catch((error) => {
         console.log("Error fetching net worth: " + error);
@@ -84,12 +94,22 @@ const Dashboard: React.FC = () => {
                   {userHasBudget ? (
                     <Budget />
                   ) : (
-                    <Link color="primary" href="#">
-                      {" "}
-                      {/* Style this somehow */}
+                    <Link
+                      color="primary"
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenSetupWizard();
+                      }}
+                    >
                       Create a Budget!
                     </Link>
                   )}
+                  <BudgetSetupWizard
+                    userEmail={user?.email}
+                    open={setupWindowOpen}
+                    onClose={handleCloseSetupWizard}
+                  />
                 </Paper>
               </Grid>
               {/* Net Worth */}
