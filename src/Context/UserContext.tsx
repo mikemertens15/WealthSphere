@@ -9,7 +9,6 @@ export interface User {
 export interface UserContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  addItemToUser: (itemId: string) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(
@@ -22,18 +21,9 @@ interface UserProviderProps {
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const addItemToUser = (itemId: string) => {
-    if (user) {
-      const updatedItems = user.items ? [...user.items, itemId] : [itemId];
-      setUser({
-        ...user,
-        items: updatedItems,
-      });
-    }
-  };
 
   return (
-    <UserContext.Provider value={{ user, setUser, addItemToUser }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

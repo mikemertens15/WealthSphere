@@ -53,9 +53,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   if (!context) {
     throw new Error("Appbar must be within UserProvider");
   }
-  const { user, addItemToUser } = context;
+  const { user } = context;
   const { linkToken, createLinkToken } = useCreateLinkToken();
-  const { openPlaid, ready } = usePlaidConfig(user, addItemToUser, linkToken);
+  const { openPlaid, ready } = usePlaidConfig(user, linkToken);
 
   useEffect(() => {
     if (ready) {

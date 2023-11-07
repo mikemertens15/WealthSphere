@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { User, UserContextProps } from "../Context/UserContext";
+import { User } from "../Context/UserContext";
 import {
   usePlaidLink,
   PlaidLinkOptions,
@@ -7,11 +7,7 @@ import {
   PlaidLinkOnSuccessMetadata,
 } from "react-plaid-link";
 
-export const usePlaidConfig = (
-  user: User | null,
-  addItemToUser: UserContextProps["addItemToUser"],
-  linkToken: string | null
-) => {
+export const usePlaidConfig = (user: User | null, linkToken: string | null) => {
   // need to protect against the linkToken being null
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
@@ -30,13 +26,12 @@ export const usePlaidConfig = (
             }),
           }
         );
-        const data = await response.json();
         if (response.ok) {
-          addItemToUser(data.itemId);
-          // setAccountLinked(true);
+          const data = await response.json();
+          console.log(data);
         }
       },
-      [addItemToUser, user]
+      [user]
     ),
     onExit: (err, metadata) => {
       if (err) {
