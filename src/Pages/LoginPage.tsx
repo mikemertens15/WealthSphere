@@ -1,6 +1,8 @@
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  Alert,
+  Snackbar,
   Container,
   Box,
   Typography,
@@ -14,13 +16,45 @@ import {
 import { UserContext } from "../Context/UserContext";
 import Copyright from "../Components/Copyright";
 
+const login = async (email: string, password: string) => {
+  const response = await fetch("http://localhost:3001/api/login", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const json = await response.json();
+    throw new Error(json.error);
+  }
+
+  return response.json();
+};
+
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("LoginPage must be used within a UserProvider");
   }
   const { setUser } = context;
+
+  const handleClose = (
+    event:
+      | React.SyntheticEvent<Element, Event>
+      | React.MouseEvent<Element, MouseEvent>,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,31 +65,23 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3001/api/login", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(userToSignIn),
-      });
+      const userData = await login(userToSignIn.email, userToSignIn.password);
 
-      const data = await response.json();
-      if (data.status === "error") {
-        alert(data.error);
-        return;
+      const user = {
+        name: userData.name,
+        email: userData.email,
+        items: userData.items,
+      };
+      setUser(user);
+      alert("Login Successful");
+      navigate("/dashboard");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Unknown Error");
       }
-      if (data.status === "success") {
-        const user = {
-          name: data.name,
-          email: data.email,
-          items: data.items,
-        };
-        setUser(user);
-        alert("Login Successful");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      console.log(err);
+      setOpen(true);
     }
   };
 
@@ -132,6 +158,11 @@ const LoginPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
