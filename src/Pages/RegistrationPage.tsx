@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -7,58 +7,97 @@ import {
   TextField,
   Button,
   Avatar,
+  Snackbar,
+  SnackbarCloseReason,
+  Alert,
 } from "@mui/material";
 import { UserContext } from "../Context/UserContext";
 import Copyright from "../Components/Copyright";
 
+const register = async (name: string, email: string, password: string) => {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  if (!response.ok) {
+    const json = await response.json();
+    throw new Error(json.error);
+  }
+
+  return response.json();
+};
+
 const RegistrationPage: React.FC = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("RegistrationPage must be used within a UserProvider");
   }
   const { setUser } = context;
 
+  // Snackbar close handler
+  const handleClose = (
+    _event: React.SyntheticEvent<unknown, Event> | Event,
+    reason: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
+  // Ensure all fields are filled out
+  const validateForm = () => {
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      setError("Please fill out all fields");
+      setOpen(true);
+      return false;
+    }
+    return true;
+  };
+
+  // Handle register request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const userToRegister = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-      confirmPassword: formData.get("confirmPassword"),
-    };
 
-    if (userToRegister.confirmPassword !== userToRegister.password) {
-      alert("Passwords do not match! Please try again");
+    if (!validateForm()) return;
+
+    if (confirmPassword !== password) {
+      setError("Passwords do not match");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/register", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(userToRegister),
-      });
-      const data = await response.json();
-      if (data.status === "error") {
-        alert(data.error);
-        return;
-      }
-      if (data) {
-        const user = {
-          name: data.name,
-          email: data.email,
-          items: data.items,
-        };
-        setUser(user);
-        alert("Registration Successful, Welcome!");
-        navigate("/dashboard");
-      }
+      const userData = await register(name, email, password);
+
+      const user = {
+        name: userData.name,
+        email: userData.email,
+      };
+      setUser(user);
+      navigate("/dashboard");
     } catch (err) {
-      console.log(err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unknown Error");
+      }
+      setOpen(true);
     }
   };
 
@@ -100,6 +139,7 @@ const RegistrationPage: React.FC = () => {
             id="name"
             label="Name"
             autoComplete="name"
+            onChange={(e) => setName(e.target.value)}
             autoFocus
           />
           <TextField
@@ -111,6 +151,7 @@ const RegistrationPage: React.FC = () => {
             id="email"
             label="Email Address"
             autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
             autoFocus
           />
           <TextField
@@ -122,6 +163,7 @@ const RegistrationPage: React.FC = () => {
             id="password"
             label="Password"
             autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
             type="password"
           />
           <TextField
@@ -133,6 +175,7 @@ const RegistrationPage: React.FC = () => {
             id="confirmPassword"
             label="Confirm Password"
             autoComplete="confirmPassword"
+            onChange={(e) => setConfirmPassword(e.target.value)}
             type="password"
           />
           <Button
@@ -145,6 +188,16 @@ const RegistrationPage: React.FC = () => {
           </Button>
         </Box>
       </Box>
+      <Snackbar
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );

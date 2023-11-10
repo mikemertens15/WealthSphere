@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Alert,
   Snackbar,
+  SnackbarCloseReason,
   Container,
   Box,
   Typography,
@@ -16,8 +17,9 @@ import {
 import { UserContext } from "../Context/UserContext";
 import Copyright from "../Components/Copyright";
 
+// Handles the login request to the backend
 const login = async (email: string, password: string) => {
-  const response = await fetch("http://localhost:3001/api/login", {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -35,6 +37,8 @@ const login = async (email: string, password: string) => {
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -44,11 +48,10 @@ const LoginPage: React.FC = () => {
   }
   const { setUser } = context;
 
+  // Snackbar close handler
   const handleClose = (
-    event:
-      | React.SyntheticEvent<Element, Event>
-      | React.MouseEvent<Element, MouseEvent>,
-    reason?: string
+    _event: React.SyntheticEvent<unknown, Event> | Event,
+    reason: SnackbarCloseReason
   ) => {
     if (reason === "clickaway") {
       return;
@@ -56,24 +59,30 @@ const LoginPage: React.FC = () => {
     setOpen(false);
   };
 
+  // Ensure all fields are filled out
+  const validateForm = () => {
+    if (typeof email !== "string" || typeof password !== "string") {
+      setError("Please fill out all fields");
+      setOpen(true);
+      return false;
+    }
+    return true;
+  };
+
+  // Handle login request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const userToSignIn = {
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
+
+    if (!validateForm()) return;
 
     try {
-      const userData = await login(userToSignIn.email, userToSignIn.password);
+      const userData = await login(email, password);
 
       const user = {
         name: userData.name,
         email: userData.email,
-        items: userData.items,
       };
       setUser(user);
-      alert("Login Successful");
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
@@ -123,6 +132,7 @@ const LoginPage: React.FC = () => {
             id="email"
             label="email address"
             autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
             autoFocus
           />
           <TextField
@@ -134,6 +144,7 @@ const LoginPage: React.FC = () => {
             id="password"
             label="password"
             autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
             type="password"
           />
           <Button
@@ -158,8 +169,13 @@ const LoginPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+      <Snackbar
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>

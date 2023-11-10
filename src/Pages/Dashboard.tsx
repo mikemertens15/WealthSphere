@@ -11,8 +11,8 @@ import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import Copyright from "../Components/Copyright";
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
+import React, { useContext } from "react";
+import useDashboardData from "../Hooks/useDashboardData";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/Navbar";
 import DrawerComponent from "../Components/Drawer";
@@ -30,11 +30,9 @@ const Dashboard: React.FC = () => {
   }
 
   const { user } = context;
+  const { netWorth, income, recentTransactions, userHasBudget } =
+    useDashboardData(user?.email);
   const [open, setOpen] = React.useState(false);
-  const [netWorth, setNetWorth] = React.useState(null);
-  const [recentTransactions, setRecentTransactions] = React.useState([]);
-  const [income, setIncome] = React.useState(0);
-  const [userHasBudget, setUserHasBudget] = React.useState(false);
   const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -47,20 +45,6 @@ const Dashboard: React.FC = () => {
   const handleCloseSetupWizard = () => {
     setSetupWizardOpen(false);
   };
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3001/api/get_dashboard_data?email=${user?.email}`)
-      .then((response) => {
-        setNetWorth(response.data.netWorth);
-        setRecentTransactions(response.data.recentTransactions);
-        setUserHasBudget(response.data.budget.hasBudget);
-        setIncome(response.data.budget.income);
-      })
-      .catch((error) => {
-        console.log("Error fetching net worth: " + error);
-      });
-  }, [user]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -130,7 +114,7 @@ const Dashboard: React.FC = () => {
               {/* Recent Transactions */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Transactions recentTransactions={recentTransactions} />
+                  <Transactions recentTransactions={recentTransactions || []} />
                 </Paper>
               </Grid>
             </Grid>

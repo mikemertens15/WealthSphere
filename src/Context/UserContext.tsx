@@ -3,7 +3,6 @@ import React, { createContext, useState, ReactNode } from "react";
 export interface User {
   name: string;
   email: string;
-  items: string[];
 }
 
 export interface UserContextProps {
