@@ -3,6 +3,7 @@ import React, { createContext, useState, ReactNode } from "react";
 export interface User {
   name: string;
   email: string;
+  numItems: number;
 }
 
 export interface UserContextProps {

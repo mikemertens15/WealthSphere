@@ -42,11 +42,13 @@ const AppBar = styled(MuiAppBar, {
 interface AppBarComponentProps {
   open: boolean;
   toggleDrawer: () => void;
+  handleAccountLinkSuccess: () => void;
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   open,
   toggleDrawer,
+  handleAccountLinkSuccess,
 }) => {
   const navigate = useNavigate();
   const context = useContext(UserContext);
@@ -55,7 +57,17 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   }
   const { user } = context;
   const { linkToken, createLinkToken } = useCreateLinkToken();
-  const { openPlaid, ready } = usePlaidConfig(user, linkToken);
+  const { openPlaid, ready } = usePlaidConfig(
+    user,
+    linkToken,
+    handleAccountLinkSuccess
+  );
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    context.setUser(null);
+    navigate("/login");
+  };
 
   useEffect(() => {
     if (ready) {
@@ -104,7 +116,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         >
           Add Account
         </Button>
-        <IconButton onClick={() => navigate("/login")} color="inherit">
+        <IconButton onClick={handleLogout} color="inherit">
           <Logout />
         </IconButton>
       </Toolbar>

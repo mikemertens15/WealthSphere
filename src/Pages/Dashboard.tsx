@@ -11,7 +11,7 @@ import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import Copyright from "../Components/Copyright";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import useDashboardData from "../Hooks/useDashboardData";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/Navbar";
@@ -24,33 +24,56 @@ const defaultTheme = createTheme();
 // TODO: Add persistance so logged in user isn't lost on refresh
 
 const Dashboard: React.FC = () => {
+  const [open, setOpen] = React.useState(false);
+  const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
+
+  // get the user from the context
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Dashboard must be within a userProvider!");
   }
-
   const { user } = context;
-  const { netWorth, income, recentTransactions, userHasBudget } =
+
+  // get data for the dashboard
+  const { netWorth, income, recentTransactions, userHasBudget, fetchData } =
     useDashboardData(user?.email);
-  const [open, setOpen] = React.useState(false);
-  const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
+
+  const handleAccountLinkSuccess = () => {
+    if (fetchData) {
+      fetchData();
+    }
+  };
+
+  // handle open and close of the drawer
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  // handle open and close of the budget setup wizard
   const handleOpenSetupWizard = () => {
     setSetupWizardOpen(true);
   };
-
   const handleCloseSetupWizard = () => {
     setSetupWizardOpen(false);
   };
+
+  // useEffect for session storage
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      context.setUser(JSON.parse(storedUser));
+    }
+  });
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBarComponent open={open} toggleDrawer={toggleDrawer} />
+        <AppBarComponent
+          open={open}
+          toggleDrawer={toggleDrawer}
+          handleAccountLinkSuccess={handleAccountLinkSuccess}
+        />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"

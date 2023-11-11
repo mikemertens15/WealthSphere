@@ -81,8 +81,10 @@ const LoginPage: React.FC = () => {
       const user = {
         name: userData.name,
         email: userData.email,
+        numItems: 0,
       };
       setUser(user);
+      sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof Error) {

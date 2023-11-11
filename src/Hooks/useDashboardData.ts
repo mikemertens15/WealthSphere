@@ -9,28 +9,27 @@ const useDashboardData = (userEmail: string | undefined) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
-          }/get_dashboard_data?email=${userEmail}`
-        );
-        setNetWorth(response.data.netWorth);
-        setRecentTransactions(response.data.recentTransactions);
-        setIncome(response.data.income);
-        setUserHasBudget(response.data.userHasBudget);
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error);
-        } else {
-          setError(new Error("An unknown error occurred"));
-        }
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/get_dashboard_data?email=${userEmail}`
+      );
+      setNetWorth(response.data.netWorth);
+      setRecentTransactions(response.data.recentTransactions);
+      setIncome(response.data.income);
+      setUserHasBudget(response.data.userHasBudget);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error);
+      } else {
+        setError(new Error("An unknown error occurred"));
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchData();
   }, [userEmail]);
 
@@ -50,6 +49,7 @@ const useDashboardData = (userEmail: string | undefined) => {
     userHasBudget,
     loading,
     error,
+    fetchData,
   };
 };
 

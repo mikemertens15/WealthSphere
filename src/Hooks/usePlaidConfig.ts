@@ -7,7 +7,11 @@ import {
   PlaidLinkOnSuccessMetadata,
 } from "react-plaid-link";
 
-export const usePlaidConfig = (user: User | null, linkToken: string | null) => {
+export const usePlaidConfig = (
+  user: User | null,
+  linkToken: string | null,
+  onLinkSuccess: () => void
+) => {
   // need to protect against the linkToken being null
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
@@ -29,9 +33,10 @@ export const usePlaidConfig = (user: User | null, linkToken: string | null) => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
+          onLinkSuccess();
         }
       },
-      [user]
+      [user, onLinkSuccess]
     ),
     onExit: (err, metadata) => {
       if (err) {
