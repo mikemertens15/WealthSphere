@@ -6,7 +6,9 @@ import {
   Container,
   Grid,
   Paper,
+  Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
@@ -24,6 +26,7 @@ const defaultTheme = createTheme();
 // TODO: Add persistance so logged in user isn't lost on refresh
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
 
@@ -42,6 +45,27 @@ const Dashboard: React.FC = () => {
     if (fetchData) {
       fetchData();
     }
+  };
+
+  const handleDeletePlaidItems = async () => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/delete_plaid_items`,
+      {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ email: user?.email }),
+      }
+    );
+
+    if (!response.ok) {
+      const json = await response.json();
+      throw new Error(json.error);
+    }
+
+    sessionStorage.removeItem("user");
+    navigate("/login");
   };
 
   // handle open and close of the drawer
@@ -141,6 +165,7 @@ const Dashboard: React.FC = () => {
                 </Paper>
               </Grid>
             </Grid>
+            <Button onClick={handleDeletePlaidItems}>Delete</Button>
             <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
