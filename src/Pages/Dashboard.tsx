@@ -1,3 +1,5 @@
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -7,23 +9,19 @@ import {
   Grid,
   Paper,
   Button,
+  Link,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import useDashboardData from "../Hooks/useDashboardData";
+import { UserContext } from "../Context/UserContext";
+import Copyright from "../Components/Copyright";
+import AppBarComponent from "../Components/Navbar";
 import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
-import Copyright from "../Components/Copyright";
-import React, { useContext, useEffect } from "react";
-import useDashboardData from "../Hooks/useDashboardData";
-import { UserContext } from "../Context/UserContext";
-import AppBarComponent from "../Components/Navbar";
 import DrawerComponent from "../Components/Drawer";
-import Link from "@mui/material/Link";
 import BudgetSetupWizard from "../Components/BudgetSetupWizard";
 
 const defaultTheme = createTheme();
-
-// TODO: Add persistance so logged in user isn't lost on refresh
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +45,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // handle deleting plaid items for development and testing purposes
   const handleDeletePlaidItems = async () => {
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/delete_plaid_items`,

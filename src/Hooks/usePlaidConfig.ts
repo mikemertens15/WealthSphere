@@ -12,7 +12,10 @@ export const usePlaidConfig = (
   linkToken: string | null,
   onLinkSuccess: () => void
 ) => {
-  // need to protect against the linkToken being null
+  // Configures the plaid link component with the link token provided by the server
+  // When user is done with the link process, the onSuccess callback is called
+  // The onSuccess callback sends the public token to the server to exchange for an access token
+  // The access token is then stored in the database, along with the initial account data
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
       async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
@@ -38,6 +41,9 @@ export const usePlaidConfig = (
       },
       [user, onLinkSuccess]
     ),
+
+    // This function is called when the user exits the Link flow without linking any accounts or if the Link flow errored out
+    // The function should delete the link_token from state and gracefully inform the user that the process was unsuccessful
     onExit: (err, metadata) => {
       if (err) {
         console.log(err);
@@ -45,13 +51,15 @@ export const usePlaidConfig = (
         console.log(metadata);
       }
     },
+
+    // Called at certain points throughout the Link flow with status updates
     onEvent: (eventName, metadata) => {
       console.log(eventName, metadata);
     },
-    token: linkToken,
+    token: linkToken, // need to protect against the linkToken being null
   };
 
   const { open, ready } = usePlaidLink(config);
-  const openPlaid = open;
+  const openPlaid = open; // renamed for clarity and avoid conflict with drawer open state
   return { openPlaid, ready };
 };

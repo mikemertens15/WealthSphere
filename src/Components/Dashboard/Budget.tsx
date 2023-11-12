@@ -30,6 +30,7 @@ interface BudgetProps {
   income: number;
 }
 
+// Display a chart of the user's spending over the month, with a reference line for their budgeted income
 const Budget: React.FC<BudgetProps> = ({ income }) => {
   const theme = useTheme();
 

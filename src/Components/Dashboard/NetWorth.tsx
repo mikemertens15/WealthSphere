@@ -11,6 +11,7 @@ interface NetWorthProps {
   netWorth: number | null;
 }
 
+// Display the user's net worth, with a link to view all of their accounts
 const NetWorth: React.FC<NetWorthProps> = ({ netWorth }) => {
   return (
     <React.Fragment>

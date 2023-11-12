@@ -23,6 +23,7 @@ function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
+// Receives a list of the user's recent transactions and displays them in a table
 const Transactions: React.FC<TransactionsProps> = ({ recentTransactions }) => {
   return (
     <React.Fragment>

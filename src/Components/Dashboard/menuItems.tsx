@@ -1,3 +1,5 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import {
   Dashboard,
@@ -10,10 +12,9 @@ import {
   Celebration,
   Layers,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import React from "react";
 
-export const mainListItems = (
+// Defines all the items in the menu drawer and provides links to the appropriate pages
+export const menuItems = (
   <React.Fragment>
     <ListItemButton component={Link} to="/dashboard">
       <ListItemIcon>

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Drawer as MuiDrawer,
   Toolbar,
@@ -7,11 +8,11 @@ import {
 } from "@mui/material";
 import { ChevronLeft } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import React from "react";
-import { mainListItems } from "./Dashboard/listItems";
+import { menuItems } from "./Dashboard/menuItems";
 
 const drawerWidth: number = 240;
 
+// Defines the style and opening animation of the menu drawer
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -43,6 +44,7 @@ interface DrawerComponentProps {
   toggleDrawer: () => void;
 }
 
+// Drawer component that displays the full menu items
 const DrawerComponent: React.FC<DrawerComponentProps> = ({
   open,
   toggleDrawer,
@@ -62,7 +64,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
         </IconButton>
       </Toolbar>
       <Divider />
-      <List component="nav">{mainListItems}</List>
+      <List component="nav">{menuItems}</List>
     </Drawer>
   );
 };

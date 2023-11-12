@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+// This hook fetches the user's current dashboard data from the server
 const useDashboardData = (userEmail: string | undefined) => {
   const [netWorth, setNetWorth] = useState(null);
   const [recentTransactions, setRecentTransactions] = useState([]);
@@ -29,6 +30,7 @@ const useDashboardData = (userEmail: string | undefined) => {
     setLoading(false);
   };
 
+  // Fetches the user's dashboard data when a new account is linked
   useEffect(() => {
     fetchData();
   }, [userEmail]);

@@ -1,3 +1,5 @@
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar as MuiAppBar,
   AppBarProps as MuiAppBarProps,
@@ -8,12 +10,9 @@ import {
 } from "@mui/material";
 import { Menu, Logout, Add } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 import { useCreateLinkToken } from "../Hooks/useCreateLinkToken";
 import { usePlaidConfig } from "../Hooks/usePlaidConfig";
-import { useContext, useEffect } from "react";
 import { UserContext } from "../Context/UserContext";
-import React from "react";
 
 const drawerWidth: number = 240;
 
@@ -21,6 +20,7 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
+// Defines the style and opening animation of the menu drawer
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
@@ -45,17 +45,22 @@ interface AppBarComponentProps {
   handleAccountLinkSuccess: () => void;
 }
 
+// AppBar component that displays the menu icon, page title, add account button, and logout button
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   open,
   toggleDrawer,
   handleAccountLinkSuccess,
 }) => {
   const navigate = useNavigate();
+
+  // Get user from context
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Appbar must be within UserProvider");
   }
   const { user } = context;
+
+  // Plaid Hooks
   const { linkToken, createLinkToken } = useCreateLinkToken();
   const { openPlaid, ready } = usePlaidConfig(
     user,
@@ -63,12 +68,14 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     handleAccountLinkSuccess
   );
 
+  // On logout, remove user from session storage and context, then navigate to login page
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     context.setUser(null);
     navigate("/login");
   };
 
+  // When add account button is clicked, linkToken is created and then Plaid is opened
   useEffect(() => {
     if (ready) {
       openPlaid();
@@ -106,7 +113,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          {user ? user.name : "undefined"}'s Dashboard
+          {user ? user.name : "undefined"}'s Dashboard{" "}
+          {/* TODO: shouldn't even be displaying navbar if user not logged in*/}
         </Typography>
         <Button
           variant="text"

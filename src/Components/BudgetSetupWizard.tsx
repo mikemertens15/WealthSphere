@@ -29,6 +29,7 @@ const steps = [
   "Shopping",
 ];
 
+// Early implementation of a budget setup wizard, currently only worried about getting input from the user
 const BudgetSetupWizard: React.FC<BudgetSetupWizardProps> = ({
   userEmail,
   open,
@@ -167,6 +168,7 @@ const BudgetSetupWizard: React.FC<BudgetSetupWizardProps> = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  // Sends the user's budget to the backend
   const handleFinish = () => {
     axios
       .post("http://localhost:3001/api/create_budget", {
