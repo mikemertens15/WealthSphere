@@ -19,13 +19,16 @@ import Copyright from "../Components/Copyright";
 
 // Handles the login request to the backend
 const login = async (email: string, password: string) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL_PRODUCTION}/login`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    }
+  );
 
   if (!response.ok) {
     const json = await response.json();

@@ -21,7 +21,7 @@ export const usePlaidConfig = (
       async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
         console.log(metadata);
         const response = await fetch(
-          "http://localhost:3001/api/exchange_public_token",
+          `${import.meta.env.VITE_API_URL_PRODUCTION}/exchange_public_token`,
           {
             method: "POST",
             headers: {

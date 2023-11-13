@@ -5,7 +5,9 @@ export const useCreateLinkToken = () => {
 
   // This function is called when the user clicks on the "Add account" button and officially starts the Link process
   const createLinkToken = useCallback(async () => {
-    const response = await fetch("http://localhost:3001/api/create_link_token");
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL_PRODUCTION}/create_link_token`
+    );
     const data = await response.json();
     setLinkToken(data.link_token);
   }, [setLinkToken]);

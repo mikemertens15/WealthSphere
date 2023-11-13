@@ -14,7 +14,9 @@ const useDashboardData = (userEmail: string | undefined) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/get_dashboard_data?email=${userEmail}`
+        `${
+          import.meta.env.VITE_API_URL_PRODUCTION
+        }/get_dashboard_data?email=${userEmail}`
       );
       setNetWorth(response.data.netWorth);
       setRecentTransactions(response.data.recentTransactions);

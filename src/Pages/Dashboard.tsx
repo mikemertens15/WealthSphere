@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
   // handle deleting plaid items for development and testing purposes
   const handleDeletePlaidItems = async () => {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/delete_plaid_items`,
+      `${import.meta.env.VITE_API_URL_PRODUCTION}/delete_plaid_items`,
       {
         method: "DELETE",
         headers: {
@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
     if (storedUser) {
       context.setUser(JSON.parse(storedUser));
     }
-  });
+  }, [context]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
