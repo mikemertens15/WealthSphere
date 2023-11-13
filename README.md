@@ -1,7 +1,8 @@
 # WealthSphere
 
 Your Personal Financial Hub
-Find the Backend Server [Here](www.github.com/mikemertens15/WealthSphere_Server)
+
+Find the Backend Server [Here](https://github.com/mikemertens15/WealthSphere_Server)
 
 ## Introduction
 
