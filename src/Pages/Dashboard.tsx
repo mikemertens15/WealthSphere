@@ -11,10 +11,11 @@ import {
   Button,
   Link,
 } from "@mui/material";
-import useDashboardData from "../Hooks/useDashboardData";
 import { UserContext } from "../Context/UserContext";
+import { AccountLinkedContext } from "../Context/AccountLinkedContext";
+import useDashboardData from "../Hooks/useDashboardData";
 import Copyright from "../Components/Copyright";
-import AppBarComponent from "../Components/Navbar";
+import AppBarComponent from "../Components/AppBar";
 import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
@@ -29,26 +30,25 @@ const Dashboard: React.FC = () => {
   const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
 
   // get the user from the context
-  const context = useContext(UserContext);
-  if (!context) {
+  const userContext = useContext(UserContext);
+  const { accountLinked } = useContext(AccountLinkedContext);
+  if (!userContext) {
     throw new Error("Dashboard must be within a userProvider!");
   }
-  const { user } = context;
+  const { user, setUser } = userContext;
 
-  // get data for the dashboard
-  const { netWorth, income, recentTransactions, userHasBudget, fetchData } =
-    useDashboardData(user?.email);
-
-  const handleAccountLinkSuccess = () => {
-    if (fetchData) {
-      fetchData();
-    }
-  };
+  const {
+    netWorth,
+    recentTransactions,
+    income,
+    userHasBudget,
+    fetchDashboardData,
+  } = useDashboardData();
 
   // handle deleting plaid items for development and testing purposes
   const handleDeletePlaidItems = async () => {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL_PRODUCTION}/delete_plaid_items`,
+      `${import.meta.env.VITE_API_URL}/delete_plaid_items`,
       {
         method: "DELETE",
         headers: {
@@ -62,8 +62,6 @@ const Dashboard: React.FC = () => {
       const json = await response.json();
       throw new Error(json.error);
     }
-
-    sessionStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -80,23 +78,24 @@ const Dashboard: React.FC = () => {
     setSetupWizardOpen(false);
   };
 
-  // useEffect for session storage
+  // fetch the dashboard data on mount and when the user's account is linked
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    if (storedUser) {
-      context.setUser(JSON.parse(storedUser));
+    console.log("running getDashBoardData");
+    if (user?.email) fetchDashboardData(user?.email);
+  }, [fetchDashboardData, user, accountLinked, userHasBudget]);
+
+  useEffect(() => {
+    const sessionUserData = sessionStorage.getItem("user");
+    if (sessionUserData) {
+      setUser(JSON.parse(sessionUserData));
     }
-  }, [context]);
+  }, [setUser]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBarComponent
-          open={open}
-          toggleDrawer={toggleDrawer}
-          handleAccountLinkSuccess={handleAccountLinkSuccess}
-        />
+        <AppBarComponent open={open} toggleDrawer={toggleDrawer} />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"

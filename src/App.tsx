@@ -6,6 +6,7 @@ import { Route, Routes, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router";
 
 import { UserProvider } from "./Context/UserContext";
+import { AccountLinkedContext } from "./Context/AccountLinkedContext";
 
 import LoginPage from "./Pages/LoginPage";
 import RegistrationPage from "./Pages/RegistrationPage";
@@ -22,6 +23,7 @@ import AccountsPage from "./Pages/AccountsPage";
 
 function App() {
   const navigate = useNavigate();
+  const [accountLinked, setAccountLinked] = React.useState(false);
 
   React.useEffect(() => {
     if (window.location.pathname === "/") {
@@ -33,22 +35,26 @@ function App() {
     <>
       <div>
         <UserProvider>
-          <Routes>
-            <Route path="/" element={<Outlet />}>
-              <Route index element={<LoginPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegistrationPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/budget" element={<BudgetPage />} />
-              <Route path="/transactions" element={<TransactionsPage />} />
-              <Route path="/balances" element={<BalancesPage />} />
-              <Route path="/investments" element={<InvestmentsPage />} />
-              <Route path="/debts" element={<DebtsPage />} />
-              <Route path="/bills" element={<BillsPage />} />
-              <Route path="/goals" element={<GoalsPage />} />
-              <Route path="/accounts" element={<AccountsPage />} />
-            </Route>
-          </Routes>
+          <AccountLinkedContext.Provider
+            value={{ accountLinked, setAccountLinked }}
+          >
+            <Routes>
+              <Route path="/" element={<Outlet />}>
+                <Route index element={<LoginPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegistrationPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/budget" element={<BudgetPage />} />
+                <Route path="/transactions" element={<TransactionsPage />} />
+                <Route path="/balances" element={<BalancesPage />} />
+                <Route path="/investments" element={<InvestmentsPage />} />
+                <Route path="/debts" element={<DebtsPage />} />
+                <Route path="/bills" element={<BillsPage />} />
+                <Route path="/goals" element={<GoalsPage />} />
+                <Route path="/accounts" element={<AccountsPage />} />
+              </Route>
+            </Routes>
+          </AccountLinkedContext.Provider>
         </UserProvider>
       </div>
     </>

@@ -15,16 +15,13 @@ import { UserContext } from "../Context/UserContext";
 import Copyright from "../Components/Copyright";
 
 const register = async (name: string, email: string, password: string) => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL_PRODUCTION}/register`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    }
-  );
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ name, email, password }),
+  });
 
   if (!response.ok) {
     const json = await response.json();

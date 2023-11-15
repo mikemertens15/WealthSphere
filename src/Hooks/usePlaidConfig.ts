@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { User } from "../Context/UserContext";
 import {
   usePlaidLink,
@@ -6,22 +6,20 @@ import {
   PlaidLinkOnSuccess,
   PlaidLinkOnSuccessMetadata,
 } from "react-plaid-link";
+import { AccountLinkedContext } from "../Context/AccountLinkedContext";
 
-export const usePlaidConfig = (
-  user: User | null,
-  linkToken: string | null,
-  onLinkSuccess: () => void
-) => {
+export const usePlaidConfig = (user: User | null, linkToken: string | null) => {
   // Configures the plaid link component with the link token provided by the server
   // When user is done with the link process, the onSuccess callback is called
   // The onSuccess callback sends the public token to the server to exchange for an access token
   // The access token is then stored in the database, along with the initial account data
+  const { setAccountLinked } = React.useContext(AccountLinkedContext);
   const config: PlaidLinkOptions = {
     onSuccess: useCallback<PlaidLinkOnSuccess>(
       async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
         console.log(metadata);
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL_PRODUCTION}/exchange_public_token`,
+          `${import.meta.env.VITE_API_URL}/exchange_public_token`,
           {
             method: "POST",
             headers: {
@@ -36,10 +34,10 @@ export const usePlaidConfig = (
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          onLinkSuccess();
+          setAccountLinked(true);
         }
       },
-      [user, onLinkSuccess]
+      [user, setAccountLinked]
     ),
 
     // This function is called when the user exits the Link flow without linking any accounts or if the Link flow errored out
@@ -59,7 +57,8 @@ export const usePlaidConfig = (
     token: linkToken, // need to protect against the linkToken being null
   };
 
-  const { open, ready } = usePlaidLink(config);
+  const { open } = usePlaidLink(config);
+  // if (!ready) return null;
   const openPlaid = open; // renamed for clarity and avoid conflict with drawer open state
-  return { openPlaid, ready };
+  return openPlaid;
 };

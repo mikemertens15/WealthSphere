@@ -42,14 +42,12 @@ const AppBar = styled(MuiAppBar, {
 interface AppBarComponentProps {
   open: boolean;
   toggleDrawer: () => void;
-  handleAccountLinkSuccess: () => void;
 }
 
 // AppBar component that displays the menu icon, page title, add account button, and logout button
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   open,
   toggleDrawer,
-  handleAccountLinkSuccess,
 }) => {
   const navigate = useNavigate();
 
@@ -62,11 +60,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
   // Plaid Hooks
   const { linkToken, createLinkToken } = useCreateLinkToken();
-  const { openPlaid, ready } = usePlaidConfig(
-    user,
-    linkToken,
-    handleAccountLinkSuccess
-  );
+  const openPlaid = usePlaidConfig(user, linkToken);
 
   // On logout, remove user from session storage and context, then navigate to login page
   const handleLogout = () => {
@@ -75,14 +69,12 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     navigate("/login");
   };
 
-  // When add account button is clicked, linkToken is created and then Plaid is opened
+  // When linkToken is updated and openPlaid is not null, call openPlaid
   useEffect(() => {
-    if (ready) {
+    if (linkToken) {
       openPlaid();
-    } else {
-      console.log("openPlaid useEffect ran but is not ready");
     }
-  }, [ready, openPlaid, linkToken]);
+  }, [linkToken, openPlaid]);
 
   return (
     <AppBar position="absolute" open={open}>

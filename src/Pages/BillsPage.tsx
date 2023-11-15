@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
-import AppBarComponent from "../Components/Navbar";
+import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
 
 const defaultTheme = createTheme();
