@@ -24,6 +24,8 @@ import BudgetSetupWizard from "../Components/BudgetSetupWizard";
 
 const defaultTheme = createTheme();
 
+// Backdrop component from MUI for loading? or progress
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
@@ -71,10 +73,10 @@ const Dashboard: React.FC = () => {
   };
 
   // handle open and close of the budget setup wizard
-  const handleOpenSetupWizard = () => {
+  const handleOpenBudgetWizard = () => {
     setSetupWizardOpen(true);
   };
-  const handleCloseSetupWizard = () => {
+  const handleCloseBudgetWizard = () => {
     setSetupWizardOpen(false);
   };
 
@@ -130,7 +132,7 @@ const Dashboard: React.FC = () => {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        handleOpenSetupWizard();
+                        handleOpenBudgetWizard();
                       }}
                     >
                       Create a Budget!
@@ -139,7 +141,7 @@ const Dashboard: React.FC = () => {
                   <BudgetSetupWizard
                     userEmail={user?.email}
                     open={setupWindowOpen}
-                    onClose={handleCloseSetupWizard}
+                    onClose={handleCloseBudgetWizard}
                   />
                 </Paper>
               </Grid>
@@ -159,7 +161,10 @@ const Dashboard: React.FC = () => {
               {/* Recent Transactions */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Transactions recentTransactions={recentTransactions || []} />
+                  <Transactions
+                    userEmail={user?.email}
+                    recentTransactions={recentTransactions || []}
+                  />
                 </Paper>
               </Grid>
             </Grid>

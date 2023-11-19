@@ -12,6 +12,7 @@ import DrawerComponent from "../Components/Drawer";
 
 const defaultTheme = createTheme();
 
+// SpeedDial component from MUI for adding transactions?
 const TransactionsPage: React.FC = () => {
   const context = useContext(UserContext);
   if (!context) {

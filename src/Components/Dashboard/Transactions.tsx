@@ -6,8 +6,11 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
+import { Button } from "@mui/material";
+import AddTransactionWizard from "../AddTransactionWizard";
 
 interface TransactionsProps {
+  userEmail: string | undefined;
   recentTransactions: {
     _id: string;
     amount: number;
@@ -24,7 +27,21 @@ function preventDefault(event: React.MouseEvent) {
 }
 
 // Receives a list of the user's recent transactions and displays them in a table
-const Transactions: React.FC<TransactionsProps> = ({ recentTransactions }) => {
+const Transactions: React.FC<TransactionsProps> = ({
+  userEmail,
+  recentTransactions,
+}) => {
+  const [addTransactionWizardOpen, setAddTransactionWizardOpen] =
+    React.useState(false);
+
+  const handleOpenAddTransactionWizard = () => {
+    setAddTransactionWizardOpen(true);
+  };
+
+  const handleCloseAddTransactionWizard = () => {
+    setAddTransactionWizardOpen(false);
+  };
+
   return (
     <React.Fragment>
       <Title>Recent Transactions</Title>
@@ -50,6 +67,19 @@ const Transactions: React.FC<TransactionsProps> = ({ recentTransactions }) => {
           ))}
         </TableBody>
       </Table>
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          handleOpenAddTransactionWizard();
+        }}
+      >
+        Add Transaction
+      </Button>
+      <AddTransactionWizard
+        userEmail={userEmail}
+        open={addTransactionWizardOpen}
+        onClose={handleCloseAddTransactionWizard}
+      />
       <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See all Transactions
       </Link>
