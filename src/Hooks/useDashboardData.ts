@@ -5,8 +5,6 @@ import axios from "axios";
 const useDashboardData = () => {
   const [netWorth, setNetWorth] = useState(null);
   const [recentTransactions, setRecentTransactions] = useState([]);
-  const [income, setIncome] = useState(0);
-  const [userHasBudget, setUserHasBudget] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchDashboardData = useCallback(async (userEmail: string) => {
@@ -16,8 +14,6 @@ const useDashboardData = () => {
       );
       setNetWorth(response.data.netWorth);
       setRecentTransactions(response.data.recentTransactions);
-      setIncome(response.data.budget.income);
-      setUserHasBudget(response.data.budget.hasBudget);
     } catch (error) {
       if (error instanceof Error) {
         setError(error);
@@ -30,8 +26,6 @@ const useDashboardData = () => {
   return {
     netWorth,
     recentTransactions,
-    income,
-    userHasBudget,
     error,
     fetchDashboardData,
   };

@@ -9,14 +9,14 @@ import {
   Grid,
   Paper,
   Button,
-  Link,
+  // Link,
 } from "@mui/material";
 import { UserContext } from "../Context/UserContext";
 import { AccountLinkedContext } from "../Context/AccountLinkedContext";
 import useDashboardData from "../Hooks/useDashboardData";
 import Copyright from "../Components/Copyright";
 import AppBarComponent from "../Components/AppBar";
-import Budget from "../Components/Dashboard/Budget";
+// import Budget from "../Components/Dashboard/Budget";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import DrawerComponent from "../Components/Drawer";
@@ -39,13 +39,8 @@ const Dashboard: React.FC = () => {
   }
   const { user, setUser } = userContext;
 
-  const {
-    netWorth,
-    recentTransactions,
-    income,
-    userHasBudget,
-    fetchDashboardData,
-  } = useDashboardData();
+  const { netWorth, recentTransactions, fetchDashboardData } =
+    useDashboardData();
 
   // handle deleting plaid items for development and testing purposes
   const handleDeletePlaidItems = async () => {
@@ -73,9 +68,9 @@ const Dashboard: React.FC = () => {
   };
 
   // handle open and close of the budget setup wizard
-  const handleOpenBudgetWizard = () => {
-    setSetupWizardOpen(true);
-  };
+  // const handleOpenBudgetWizard = () => {
+  //   setSetupWizardOpen(true);
+  // };
   const handleCloseBudgetWizard = () => {
     setSetupWizardOpen(false);
   };
@@ -84,7 +79,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     console.log("running getDashBoardData");
     if (user?.email) fetchDashboardData(user?.email);
-  }, [fetchDashboardData, user, accountLinked, userHasBudget]);
+  }, [fetchDashboardData, user, accountLinked]);
 
   useEffect(() => {
     const sessionUserData = sessionStorage.getItem("user");
@@ -124,20 +119,7 @@ const Dashboard: React.FC = () => {
                     height: 240,
                   }}
                 >
-                  {userHasBudget ? (
-                    <Budget income={income} />
-                  ) : (
-                    <Link
-                      color="primary"
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleOpenBudgetWizard();
-                      }}
-                    >
-                      Create a Budget!
-                    </Link>
-                  )}
+                  <h1>Budget Widget in progress</h1>
                   <BudgetSetupWizard
                     userEmail={user?.email}
                     open={setupWindowOpen}
