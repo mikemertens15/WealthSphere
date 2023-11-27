@@ -36,7 +36,7 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
         `${import.meta.env.VITE_API_URL}/add_manual_transaction`,
         {
           email: userEmail,
-          merchant: merchant,
+          merchant_name: merchant,
           category: category,
           account: account,
           amount: amount,
