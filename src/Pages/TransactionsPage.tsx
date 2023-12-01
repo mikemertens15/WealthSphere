@@ -127,7 +127,7 @@ const TransactionsPage: React.FC = () => {
                           <TableCell>{transaction.merchant_name}</TableCell>
                           <TableCell>{transaction.category}</TableCell>
                           <TableCell>{transaction.account}</TableCell>
-                          <TableCell>{transaction.amount}</TableCell>
+                          <TableCell>{`$${transaction.amount}`}</TableCell>
                         </TableRow>
                       ))}
                 </TableBody>

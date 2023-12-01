@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { primaryFinanceCategories } from "../utils/financeCategories";
 import {
   Dialog,
   DialogContent,
@@ -6,6 +7,10 @@ import {
   DialogTitle,
   TextField,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
@@ -64,16 +69,20 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
           onChange={(e) => setMerchant(e.target.value)}
           variant="standard"
         />
-        {/*TODO: Make this a drop down for categories instead of text */}
-        <TextField
-          autoFocus
-          margin="dense"
-          id="Category"
-          label="Category"
-          type="text"
-          onChange={(e) => setCategory(e.target.value)}
-          variant="standard"
-        />
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="category-label">Category</InputLabel>
+          <Select
+            labelId="category-label"
+            id="category"
+            value={category}
+            label="Category"
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {primaryFinanceCategories.map((category) => (
+              <MenuItem value={category}>{category}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {/*TODO: Make this a drop down for accounts instead of text */}
         <TextField
           autoFocus
