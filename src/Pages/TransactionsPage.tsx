@@ -59,7 +59,7 @@ const TransactionsPage: React.FC = () => {
     setOpen(!open);
   };
 
-  const handlePageChange = (event: unknown, newPage: number) => {
+  const handlePageChange = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
