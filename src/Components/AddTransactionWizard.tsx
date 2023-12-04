@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { primaryFinanceCategories } from "../utils/financeCategories";
 import {
   Dialog,
@@ -28,7 +28,6 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
   open,
   onClose,
 }) => {
-  const [accounts, setAccounts] = useState([]);
   const [merchant, setMerchant] = useState("");
   const [category, setCategory] = useState("");
   const [account, setAccount] = useState("");
@@ -55,19 +54,6 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
     }
     onClose();
   };
-
-  useEffect(() => {
-    if (open) {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/get_accounts`)
-        .then((res) => {
-          setAccounts(res.data.accounts);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [open, userEmail]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -97,25 +83,15 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth margin="dense">
-          <InputLabel id="account-label">Account</InputLabel>
-          <Select
-            labelId="account-label"
-            id="account"
-            value={account}
-            label="Account"
-            onChange={(e) => setAccount(e.target.value)}
-          >
-            {accounts.map((account) => (
-              <MenuItem value={account}>{account}</MenuItem>
-            ))}
-            {accounts.map((account, index) => (
-              <MenuItem key={index} value={account}>
-                {account}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="Account"
+          label="Account"
+          type="text"
+          onChange={(e) => setAccount(e.target.value)}
+          variant="standard"
+        />
         <TextField
           autoFocus
           margin="dense"
