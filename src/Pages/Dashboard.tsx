@@ -77,7 +77,6 @@ const Dashboard: React.FC = () => {
 
   // fetch the dashboard data on mount and when the user's account is linked
   useEffect(() => {
-    console.log("running getDashBoardData");
     if (user?.email) fetchDashboardData(user?.email);
   }, [fetchDashboardData, user, accountLinked]);
 
