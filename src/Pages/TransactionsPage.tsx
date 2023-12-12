@@ -35,6 +35,7 @@ interface Transaction {
   merchant_name: string;
 }
 
+// *Most of this logic should be moved to a separate hook or something*
 const TransactionsPage: React.FC = () => {
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
