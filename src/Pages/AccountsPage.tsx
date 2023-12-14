@@ -4,7 +4,15 @@ import {
   ThemeProvider,
   Toolbar,
   createTheme,
+  Card,
+  CardContent,
+  Typography,
+  List,
+  ListItem,
+  Button,
+  IconButton,
 } from "@mui/material";
+import { Settings, Add } from "@mui/icons-material";
 import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
@@ -22,6 +30,12 @@ const AccountsPage: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const accounts = [{ accountName: "Checking" }, { accountName: "Savings" }];
+
+  const handleAddAccount = () => {
+    console.log("Add account");
   };
 
   return (
@@ -43,7 +57,49 @@ const AccountsPage: React.FC = () => {
           }}
         >
           <Toolbar />
-          <h1>The Accounts Page</h1>
+          <Box sx={{ margin: 3 }}>
+            <Typography variant="h4" gutterBottom>
+              Linked Accounts
+            </Typography>
+            <List>
+              {accounts.map((account, index) => (
+                <ListItem key={index}>
+                  <Card
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6">
+                        {account.accountName}
+                      </Typography>
+                    </CardContent>
+                    <IconButton
+                      onClick={() =>
+                        console.log("Add some settings to alter the account")
+                      }
+                    >
+                      <Settings />
+                    </IconButton>
+                  </Card>
+                </ListItem>
+              ))}
+            </List>
+            <Box
+              sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
+            >
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={handleAddAccount}
+              >
+                Add Account
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
