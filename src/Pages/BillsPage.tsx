@@ -17,10 +17,18 @@ import {
   DialogActions,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import React, { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
+import usePostData from "../Hooks/usePostData";
+import axios from "axios";
+
+interface Bill {
+  name: string;
+  amount: number;
+  dueDate: string;
+}
 
 const defaultTheme = createTheme();
 
@@ -30,14 +38,14 @@ const BillsPage: React.FC = () => {
     throw new Error("Budget must be within a userProvider");
   }
 
-  // const { user } = context;
-  const [open, setOpen] = React.useState(false);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [newBill, setNewBill] = React.useState({
-    title: "",
-    amount: "",
-    dueDate: "",
-  });
+  const { user } = context;
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const { postData } = usePostData("add_new_bill", user?.email);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [billName, setBillName] = useState("");
+  const [billAmount, setBillAmount] = useState("");
+  const [billDueDate, setBillDueDate] = useState("");
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -52,14 +60,22 @@ const BillsPage: React.FC = () => {
   };
 
   const handleSaveBill = () => {
-    console.log("New bill");
+    postData({ name: billName, amount: billAmount, dueDate: billDueDate });
     handleCloseDialog();
   };
 
-  const bills = [
-    { title: "Rent", amount: "1000", dueDate: "1st" },
-    { title: "Netflix", amount: "15", dueDate: "15th" },
-  ];
+  const fetchData = async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/get_balance_page_data?email=${
+        user?.email
+      }`
+    );
+    setBills(response.data.bills);
+  };
+
+  useEffect(() => {
+    fetchData();
+  });
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -89,7 +105,7 @@ const BillsPage: React.FC = () => {
                 <ListItem key={index}>
                   <Card sx={{ width: "100%" }}>
                     <CardContent>
-                      <Typography variant="h6">{bill.title}</Typography>
+                      <Typography variant="h6">{bill.name}</Typography>
                       <Typography>Amount: {bill.amount}</Typography>
                       <Typography>Due Date: {bill.dueDate}</Typography>
                     </CardContent>
@@ -122,8 +138,8 @@ const BillsPage: React.FC = () => {
             type="text"
             fullWidth
             variant="standard"
-            value={newBill.title}
-            onChange={(e) => setNewBill({ ...newBill, title: e.target.value })}
+            value={billName}
+            onChange={(e) => setBillName(e.target.value)}
           />
           <TextField
             margin="dense"
@@ -132,8 +148,8 @@ const BillsPage: React.FC = () => {
             type="number"
             fullWidth
             variant="standard"
-            value={newBill.amount}
-            onChange={(e) => setNewBill({ ...newBill, amount: e.target.value })}
+            value={billAmount}
+            onChange={(e) => setBillAmount(e.target.value)}
           />
           <TextField
             margin="dense"
@@ -142,10 +158,8 @@ const BillsPage: React.FC = () => {
             type="text"
             fullWidth
             variant="standard"
-            value={newBill.dueDate}
-            onChange={(e) =>
-              setNewBill({ ...newBill, dueDate: e.target.value })
-            }
+            value={billDueDate}
+            onChange={(e) => setBillDueDate(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
