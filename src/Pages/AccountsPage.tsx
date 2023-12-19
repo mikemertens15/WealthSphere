@@ -32,6 +32,7 @@ const AccountsPage: React.FC = () => {
     setOpen(!open);
   };
 
+  // dummy data
   const accounts = [{ accountName: "Checking" }, { accountName: "Savings" }];
 
   const handleAddAccount = () => {
