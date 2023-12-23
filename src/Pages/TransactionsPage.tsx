@@ -1,3 +1,5 @@
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import {
   Box,
   CssBaseline,
@@ -17,8 +19,6 @@ import {
   createTheme,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
@@ -37,11 +37,11 @@ interface Transaction {
 
 // *Most of this logic should be moved to a separate hook or something*
 const TransactionsPage: React.FC = () => {
-  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-  const [open, setOpen] = React.useState(false);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [open, setOpen] = useState(false);
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Budget must be within a userProvider");

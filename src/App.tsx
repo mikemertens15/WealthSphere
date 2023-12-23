@@ -1,11 +1,13 @@
+import { Route, Routes, Outlet } from "react-router-dom";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useNavigate } from "react-router";
+
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { Route, Routes, Outlet } from "react-router-dom";
-import { useNavigate } from "react-router";
+
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { UserProvider } from "./Context/UserContext";
 import { AccountLinkedContext } from "./Context/AccountLinkedContext";

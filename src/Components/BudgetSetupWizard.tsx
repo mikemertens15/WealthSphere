@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   Step,
   StepLabel,
 } from "@mui/material";
-import axios from "axios";
 
 interface BudgetSetupWizardProps {
   userEmail: string | undefined;

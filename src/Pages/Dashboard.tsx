@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
@@ -28,8 +28,8 @@ const defaultTheme = createTheme();
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [setupWindowOpen, setSetupWizardOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [setupWindowOpen, setSetupWizardOpen] = useState(false);
 
   // get the user from the context
   const userContext = useContext(UserContext);

@@ -1,3 +1,5 @@
+import { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   CssBaseline,
@@ -16,11 +18,9 @@ import {
   TextField,
   DialogActions,
 } from "@mui/material";
-import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
-import axios from "axios";
 
 const defaultTheme = createTheme();
 
@@ -39,10 +39,10 @@ const BalancesPage: React.FC = () => {
   const { user } = context;
 
   // const { user } = context;
-  const [open, setOpen] = React.useState(false);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [netWorth, setNetWorth] = React.useState(0);
-  const [accounts, setAccounts] = React.useState<Account[]>([]);
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [netWorth, setNetWorth] = useState(0);
+  const [accounts, setAccounts] = useState<Account[]>([]);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -71,7 +71,7 @@ const BalancesPage: React.FC = () => {
     setAccounts(response.data.accounts);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
   });
 
