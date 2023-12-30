@@ -78,8 +78,10 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
             label="Category"
             onChange={(e) => setCategory(e.target.value)}
           >
-            {primaryFinanceCategories.map((category) => (
-              <MenuItem value={category}>{category}</MenuItem>
+            {primaryFinanceCategories.map((category, index) => (
+              <MenuItem key={index} value={category}>
+                {category}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
