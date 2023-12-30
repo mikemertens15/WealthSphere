@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Alert,
@@ -15,25 +15,19 @@ import {
 } from "@mui/material";
 
 import { UserContext } from "../Context/UserContext";
+
 import Copyright from "../Components/Copyright";
+import { useAxios } from "../Hooks/useAxios";
 
-// Handles the login request to the backend
-const login = async (email: string, password: string) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 
-  if (!response.ok) {
-    const json = await response.json();
-    throw new Error(json.error);
-  }
-
-  return response.json();
-};
+interface LoginResponse {
+  name: string;
+  email: string;
+}
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,6 +42,18 @@ const LoginPage: React.FC = () => {
   }
   const { setUser } = context;
 
+  const { response, axiosError, loading, execute } = useAxios<
+    LoginRequest,
+    LoginResponse
+  >({
+    method: "POST",
+    url: "/login",
+    body: {
+      email,
+      password,
+    },
+  });
+
   // Snackbar close handler
   const handleClose = (
     _event: React.SyntheticEvent<unknown, Event> | Event,
@@ -59,42 +65,28 @@ const LoginPage: React.FC = () => {
     setOpen(false);
   };
 
-  // Ensure all fields are filled out
-  const validateForm = () => {
-    if (typeof email !== "string" || typeof password !== "string") {
-      setError("Please fill out all fields");
-      setOpen(true);
-      return false;
-    }
-    return true;
-  };
-
   // Handle login request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    await execute();
+  };
 
-    if (!validateForm()) return;
-
-    try {
-      const userData = await login(email, password);
-
+  useEffect(() => {
+    if (response !== null) {
       const user = {
-        name: userData.name,
-        email: userData.email,
+        name: response.data.name,
+        email: response.data.email,
         numItems: 0,
       };
       setUser(user);
       sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Unknown Error");
-      }
+    }
+    if (axiosError !== null) {
+      setError(axiosError.message);
       setOpen(true);
     }
-  };
+  }, [response, error]);
 
   return (
     <Container
