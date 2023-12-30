@@ -23,10 +23,11 @@ export function useAxios<Req = unknown, Res = unknown>({
 }: RequestProps<Req>): UseAxiosReturn<Res> {
   const [response, setResponse] = useState<AxiosResponse<Res> | null>(null);
   const [axiosError, setError] = useState<AxiosError | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const execute = useCallback(async () => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const axiosConfig: AxiosRequestConfig<Req> = {
           method,

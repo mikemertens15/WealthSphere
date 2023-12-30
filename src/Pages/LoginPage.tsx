@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
       setError(axiosError.message);
       setOpen(true);
     }
-  }, [response, error]);
+  }, [response, axiosError, setUser, navigate]);
 
   return (
     <Container
@@ -147,7 +147,7 @@ const LoginPage: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </Button>
           <Grid container>
             <Grid item xs>
