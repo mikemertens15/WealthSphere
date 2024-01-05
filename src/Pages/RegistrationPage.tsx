@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -11,25 +11,21 @@ import {
   SnackbarCloseReason,
   Alert,
 } from "@mui/material";
+
 import { UserContext } from "../Context/UserContext";
+import { useAxios } from "../Hooks/useAxios";
 import Copyright from "../Components/Copyright";
 
-const register = async (name: string, email: string, password: string) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ name, email, password }),
-  });
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
 
-  if (!response.ok) {
-    const json = await response.json();
-    throw new Error(json.error);
-  }
-
-  return response.json();
-};
+interface RegisterResponse {
+  name: string;
+  email: string;
+}
 
 const RegistrationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,6 +42,19 @@ const RegistrationPage: React.FC = () => {
   }
   const { setUser } = context;
 
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    RegisterRequest,
+    RegisterResponse
+  >({
+    method: "POST",
+    url: "/register",
+    body: {
+      name,
+      email,
+      password,
+    },
+  });
+
   // Snackbar close handler
   const handleClose = (
     _event: React.SyntheticEvent<unknown, Event> | Event,
@@ -59,12 +68,28 @@ const RegistrationPage: React.FC = () => {
 
   // Ensure all fields are filled out
   const validateForm = () => {
-    if (
-      typeof name !== "string" ||
-      typeof email !== "string" ||
-      typeof password !== "string"
-    ) {
-      setError("Please fill out all fields");
+    if (typeof name !== "string" || name === "") {
+      setError("Please provide a name");
+      setOpen(true);
+      return false;
+    }
+    if (typeof email !== "string" || email === "") {
+      setError("Please provide an email address");
+      setOpen(true);
+      return false;
+    }
+    if (typeof password !== "string" || password === "") {
+      setError("Please provide a password");
+      setOpen(true);
+      return false;
+    }
+    if (typeof confirmPassword !== "string" || confirmPassword === "") {
+      setError("Please confirm your password");
+      setOpen(true);
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       setOpen(true);
       return false;
     }
@@ -74,34 +99,26 @@ const RegistrationPage: React.FC = () => {
   // Handle register request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!validateForm()) return;
+    await execute();
+  };
 
-    if (confirmPassword !== password) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const userData = await register(name, email, password);
-
+  useEffect(() => {
+    if (response !== null) {
       const user = {
-        name: userData.name,
-        email: userData.email,
+        name: response.data.name,
+        email: response.data.email,
         numItems: 0,
       };
       setUser(user);
       sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unknown Error");
-      }
+    }
+    if (axiosErrorMessage !== null) {
+      setError(axiosErrorMessage);
       setOpen(true);
     }
-  };
+  }, [response, axiosErrorMessage, setUser, navigate]);
 
   return (
     <Container
@@ -186,8 +203,9 @@ const RegistrationPage: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </Button>
+          <a href="/login">Go Back</a>
         </Box>
       </Box>
       <Snackbar
