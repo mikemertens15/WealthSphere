@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
   }
   const { setUser } = context;
 
-  const { response, axiosError, loading, execute } = useAxios<
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
     LoginRequest,
     LoginResponse
   >({
@@ -65,9 +65,25 @@ const LoginPage: React.FC = () => {
     setOpen(false);
   };
 
+  // Ensure all fields are filled out
+  const validateForm = () => {
+    if (typeof email !== "string" || email === "") {
+      setError("Please provide an email address");
+      setOpen(true);
+      return false;
+    }
+    if (typeof password !== "string" || password === "") {
+      setError("Please provide a password");
+      setOpen(true);
+      return false;
+    }
+    return true;
+  };
+
   // Handle login request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!validateForm()) return;
     await execute();
   };
 
@@ -82,11 +98,11 @@ const LoginPage: React.FC = () => {
       sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
     }
-    if (axiosError !== null) {
-      setError(axiosError.message);
+    if (axiosErrorMessage !== null) {
+      setError(axiosErrorMessage);
       setOpen(true);
     }
-  }, [response, axiosError, setUser, navigate]);
+  }, [response, axiosErrorMessage, setUser, navigate]);
 
   return (
     <Container
