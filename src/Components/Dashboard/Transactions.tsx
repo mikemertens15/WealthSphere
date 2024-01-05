@@ -7,19 +7,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 import { Button } from "@mui/material";
+import Transaction from "../../utils/transaction";
 import AddTransactionWizard from "../AddTransactionWizard";
 
 interface TransactionsProps {
   userEmail: string | undefined;
-  recentTransactions: {
-    _id: string;
-    amount: number;
-    accountName: string;
-    category: string;
-    date: string;
-    merchant_name: string;
-    plaidItem: string;
-  }[];
+  recentTransactions: Transaction[];
 }
 
 function preventDefault(event: React.MouseEvent) {
