@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
@@ -8,12 +8,15 @@ import {
   Container,
   Grid,
   Paper,
+  Alert,
   Button,
+  CircularProgress,
   // Link,
 } from "@mui/material";
 import { UserContext } from "../Context/UserContext";
 import { AccountLinkedContext } from "../Context/AccountLinkedContext";
-import useDashboardData from "../Hooks/useDashboardData";
+import { useAxios } from "../Hooks/useAxios";
+import Transaction from "../utils/transaction";
 import Copyright from "../Components/Copyright";
 import AppBarComponent from "../Components/AppBar";
 // import Budget from "../Components/Dashboard/Budget";
@@ -23,6 +26,15 @@ import DrawerComponent from "../Components/Drawer";
 import BudgetSetupWizard from "../Components/BudgetSetupWizard";
 
 const defaultTheme = createTheme();
+
+interface DashBoardRequest {
+  email: string;
+}
+
+interface DashBoardResponse {
+  netWorth: number;
+  recentTransactions: Transaction[];
+}
 
 // Backdrop component from MUI for loading? or progress
 
@@ -38,9 +50,18 @@ const Dashboard: React.FC = () => {
     throw new Error("Dashboard must be within a userProvider!");
   }
   const { user, setUser } = userContext;
+  const email = user?.email;
 
-  const { netWorth, recentTransactions, fetchDashboardData } =
-    useDashboardData();
+  const params = useMemo(() => ({ email }), [email]);
+
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    DashBoardRequest,
+    DashBoardResponse
+  >({
+    method: "GET",
+    url: "/get_dashboard_data",
+    params,
+  });
 
   // handle deleting plaid items for development and testing purposes
   const handleDeletePlaidItems = async () => {
@@ -77,8 +98,8 @@ const Dashboard: React.FC = () => {
 
   // fetch the dashboard data on mount and when the user's account is linked
   useEffect(() => {
-    if (user?.email) fetchDashboardData(user?.email);
-  }, [fetchDashboardData, user, accountLinked]);
+    if (user?.email) execute();
+  }, [user?.email, execute, accountLinked]);
 
   useEffect(() => {
     const sessionUserData = sessionStorage.getItem("user");
@@ -106,52 +127,78 @@ const Dashboard: React.FC = () => {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <h1>Budget Widget in progress</h1>
-                  <BudgetSetupWizard
-                    userEmail={user?.email}
-                    open={setupWindowOpen}
-                    onClose={handleCloseBudgetWizard}
-                  />
-                </Paper>
+          {loading && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+
+          {!loading && !axiosErrorMessage && (
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                {/* Chart */}
+                <Grid item xs={12} md={8} lg={9}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: 240,
+                    }}
+                  >
+                    <h1>Budget Widget in progress</h1>
+                    <BudgetSetupWizard
+                      userEmail={user?.email}
+                      open={setupWindowOpen}
+                      onClose={handleCloseBudgetWizard}
+                    />
+                  </Paper>
+                </Grid>
+                {/* Net Worth */}
+                <Grid item xs={12} md={4} lg={3}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: 240,
+                    }}
+                  >
+                    <NetWorth netWorth={response?.data.netWorth || 0} />
+                  </Paper>
+                </Grid>
+                {/* Recent Transactions */}
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <Transactions
+                      userEmail={user?.email}
+                      recentTransactions={
+                        response?.data.recentTransactions || []
+                      }
+                    />
+                  </Paper>
+                </Grid>
               </Grid>
-              {/* Net Worth */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <NetWorth netWorth={netWorth} />
-                </Paper>
-              </Grid>
-              {/* Recent Transactions */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Transactions
-                    userEmail={user?.email}
-                    recentTransactions={recentTransactions || []}
-                  />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Button onClick={handleDeletePlaidItems}>Delete</Button>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+              <Button onClick={handleDeletePlaidItems}>Delete</Button>
+              <Copyright sx={{ pt: 4 }} />
+            </Container>
+          )}
+
+          {axiosErrorMessage && (
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Alert severity="error">{axiosErrorMessage}</Alert>
+              <Button onClick={execute}>Try Again</Button>
+            </Container>
+          )}
         </Box>
       </Box>
     </ThemeProvider>
