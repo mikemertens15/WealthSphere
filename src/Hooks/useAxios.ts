@@ -1,10 +1,11 @@
 import { useState, useCallback } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-type RequestProps<Req> = {
+type RequestProps<Req, Params> = {
   url: string;
   method: "GET" | "POST" | "PUT" | "DELETE";
   body?: Req;
+  params?: Params;
   headers?: Record<string, string>;
 };
 
@@ -15,12 +16,13 @@ type UseAxiosReturn<Res> = {
   execute: () => Promise<void>;
 };
 
-export function useAxios<Req = unknown, Res = unknown>({
+export function useAxios<Req = unknown, Res = unknown, Params = unknown>({
   url,
   method,
   body,
+  params,
   headers,
-}: RequestProps<Req>): UseAxiosReturn<Res> {
+}: RequestProps<Req, Params>): UseAxiosReturn<Res> {
   const [response, setResponse] = useState<AxiosResponse<Res> | null>(null);
   const [axiosErrorMessage, setAxiosErrorMessage] = useState<string | null>(
     null
@@ -35,7 +37,7 @@ export function useAxios<Req = unknown, Res = unknown>({
           method,
           url: `${import.meta.env.VITE_API_URL}${url}`,
           headers: headers || { "Content-Type": "application/json" },
-          data: body,
+          ...(method === "GET" ? { params } : { data: body }),
         };
         const result = await axios<Res>(axiosConfig);
         setResponse(result);
@@ -53,7 +55,7 @@ export function useAxios<Req = unknown, Res = unknown>({
     };
 
     fetchData();
-  }, [url, method, body, headers]);
+  }, [url, method, body, params, headers]);
 
   return { response, axiosErrorMessage, loading, execute };
 }
