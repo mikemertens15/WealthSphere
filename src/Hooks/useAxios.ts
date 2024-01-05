@@ -10,7 +10,7 @@ type RequestProps<Req> = {
 
 type UseAxiosReturn<Res> = {
   response: AxiosResponse<Res> | null;
-  axiosError: string | null;
+  axiosErrorMessage: string | null;
   loading: boolean;
   execute: () => Promise<void>;
 };
@@ -22,7 +22,9 @@ export function useAxios<Req = unknown, Res = unknown>({
   headers,
 }: RequestProps<Req>): UseAxiosReturn<Res> {
   const [response, setResponse] = useState<AxiosResponse<Res> | null>(null);
-  const [axiosError, setAxiosError] = useState<string | null>(null);
+  const [axiosErrorMessage, setAxiosErrorMessage] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
   const execute = useCallback(async () => {
@@ -40,10 +42,10 @@ export function useAxios<Req = unknown, Res = unknown>({
       } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response) {
-            setAxiosError(err.response.data.error);
+            setAxiosErrorMessage(err.response.data.error);
           }
         } else if (err instanceof Error) {
-          setAxiosError(err.message);
+          setAxiosErrorMessage(err.message);
         }
       } finally {
         setLoading(false);
@@ -53,5 +55,5 @@ export function useAxios<Req = unknown, Res = unknown>({
     fetchData();
   }, [url, method, body, headers]);
 
-  return { response, axiosError, loading, execute };
+  return { response, axiosErrorMessage, loading, execute };
 }
