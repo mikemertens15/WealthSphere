@@ -24,6 +24,7 @@ import DebtsPage from "./Pages/DebtsPage";
 import BillsPage from "./Pages/BillsPage";
 import GoalsPage from "./Pages/GoalsPage";
 import AccountsPage from "./Pages/AccountsPage";
+import { SnackbarProvider } from "./Context/SnackbarContext";
 
 function App() {
   const navigate = useNavigate();
@@ -40,26 +41,31 @@ function App() {
       <div>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <UserProvider>
-            <AccountLinkedContext.Provider
-              value={{ accountLinked, setAccountLinked }}
-            >
-              <Routes>
-                <Route path="/" element={<Outlet />}>
-                  <Route index element={<LoginPage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegistrationPage />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/budget" element={<BudgetPage />} />
-                  <Route path="/transactions" element={<TransactionsPage />} />
-                  <Route path="/balances" element={<BalancesPage />} />
-                  <Route path="/investments" element={<InvestmentsPage />} />
-                  <Route path="/debts" element={<DebtsPage />} />
-                  <Route path="/bills" element={<BillsPage />} />
-                  <Route path="/goals" element={<GoalsPage />} />
-                  <Route path="/accounts" element={<AccountsPage />} />
-                </Route>
-              </Routes>
-            </AccountLinkedContext.Provider>
+            <SnackbarProvider>
+              <AccountLinkedContext.Provider
+                value={{ accountLinked, setAccountLinked }}
+              >
+                <Routes>
+                  <Route path="/" element={<Outlet />}>
+                    <Route index element={<LoginPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegistrationPage />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/budget" element={<BudgetPage />} />
+                    <Route
+                      path="/transactions"
+                      element={<TransactionsPage />}
+                    />
+                    <Route path="/balances" element={<BalancesPage />} />
+                    <Route path="/investments" element={<InvestmentsPage />} />
+                    <Route path="/debts" element={<DebtsPage />} />
+                    <Route path="/bills" element={<BillsPage />} />
+                    <Route path="/goals" element={<GoalsPage />} />
+                    <Route path="/accounts" element={<AccountsPage />} />
+                  </Route>
+                </Routes>
+              </AccountLinkedContext.Provider>
+            </SnackbarProvider>
           </UserProvider>
         </LocalizationProvider>
       </div>

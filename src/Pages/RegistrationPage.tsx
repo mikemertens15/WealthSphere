@@ -7,12 +7,10 @@ import {
   TextField,
   Button,
   Avatar,
-  Snackbar,
-  SnackbarCloseReason,
-  Alert,
 } from "@mui/material";
 
 import { UserContext } from "../Context/UserContext";
+import { useSnackbar } from "../Context/SnackbarContext";
 import { useAxios } from "../Hooks/useAxios";
 import Copyright from "../Components/Copyright";
 
@@ -33,9 +31,8 @@ const RegistrationPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false);
 
+  const { showSnackbar } = useSnackbar();
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("RegistrationPage must be used within a UserProvider");
@@ -55,42 +52,26 @@ const RegistrationPage: React.FC = () => {
     },
   });
 
-  // Snackbar close handler
-  const handleClose = (
-    _event: React.SyntheticEvent<unknown, Event> | Event,
-    reason: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-
   // Ensure all fields are filled out
   const validateForm = () => {
     if (typeof name !== "string" || name === "") {
-      setError("Please provide a name");
-      setOpen(true);
+      showSnackbar("Please provide a name", "error");
       return false;
     }
     if (typeof email !== "string" || email === "") {
-      setError("Please provide an email address");
-      setOpen(true);
+      showSnackbar("Please provide an email", "error");
       return false;
     }
     if (typeof password !== "string" || password === "") {
-      setError("Please provide a password");
-      setOpen(true);
+      showSnackbar("Please provide a password", "error");
       return false;
     }
     if (typeof confirmPassword !== "string" || confirmPassword === "") {
-      setError("Please confirm your password");
-      setOpen(true);
+      showSnackbar("Please confirm your password", "error");
       return false;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setOpen(true);
+      showSnackbar("Passwords do not match", "error");
       return false;
     }
     return true;
@@ -115,10 +96,9 @@ const RegistrationPage: React.FC = () => {
       navigate("/dashboard");
     }
     if (axiosErrorMessage !== null) {
-      setError(axiosErrorMessage);
-      setOpen(true);
+      showSnackbar(axiosErrorMessage, "error");
     }
-  }, [response, axiosErrorMessage, setUser, navigate]);
+  }, [response, showSnackbar, axiosErrorMessage, setUser, navigate]);
 
   return (
     <Container
@@ -208,16 +188,6 @@ const RegistrationPage: React.FC = () => {
           <a href="/login">Go Back</a>
         </Box>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );

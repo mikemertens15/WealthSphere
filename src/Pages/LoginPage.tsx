@@ -1,9 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Alert,
-  Snackbar,
-  SnackbarCloseReason,
   Container,
   Box,
   Typography,
@@ -15,6 +12,7 @@ import {
 } from "@mui/material";
 
 import { UserContext } from "../Context/UserContext";
+import { useSnackbar } from "../Context/SnackbarContext";
 
 import Copyright from "../Components/Copyright";
 import { useAxios } from "../Hooks/useAxios";
@@ -33,9 +31,8 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false);
 
+  const { showSnackbar } = useSnackbar();
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("LoginPage must be used within a UserProvider");
@@ -54,27 +51,14 @@ const LoginPage: React.FC = () => {
     },
   });
 
-  // Snackbar close handler
-  const handleClose = (
-    _event: React.SyntheticEvent<unknown, Event> | Event,
-    reason: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-
   // Ensure all fields are filled out
   const validateForm = () => {
     if (typeof email !== "string" || email === "") {
-      setError("Please provide an email address");
-      setOpen(true);
+      showSnackbar("Please provide an email", "error");
       return false;
     }
     if (typeof password !== "string" || password === "") {
-      setError("Please provide a password");
-      setOpen(true);
+      showSnackbar("Please provide a password", "error");
       return false;
     }
     return true;
@@ -99,9 +83,9 @@ const LoginPage: React.FC = () => {
       navigate("/dashboard");
     }
     if (axiosErrorMessage !== null) {
-      setError(axiosErrorMessage);
-      setOpen(true);
+      showSnackbar(axiosErrorMessage, "error");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response, axiosErrorMessage, setUser, navigate]);
 
   return (
@@ -179,16 +163,6 @@ const LoginPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
