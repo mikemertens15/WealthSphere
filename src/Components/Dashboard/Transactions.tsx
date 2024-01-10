@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -20,12 +20,9 @@ function preventDefault(event: React.MouseEvent) {
 }
 
 // Receives a list of the user's recent transactions and displays them in a table
-const Transactions: React.FC<TransactionsProps> = ({
-  userEmail,
-  recentTransactions,
-}) => {
+const Transactions: React.FC<TransactionsProps> = ({ recentTransactions }) => {
   const [addTransactionWizardOpen, setAddTransactionWizardOpen] =
-    React.useState(false);
+    useState(false);
 
   const handleOpenAddTransactionWizard = () => {
     setAddTransactionWizardOpen(true);
@@ -69,7 +66,6 @@ const Transactions: React.FC<TransactionsProps> = ({
         Add Transaction
       </Button>
       <AddTransactionWizard
-        userEmail={userEmail}
         open={addTransactionWizardOpen}
         onClose={handleCloseAddTransactionWizard}
       />
