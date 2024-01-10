@@ -23,7 +23,6 @@ import AppBarComponent from "../Components/AppBar";
 import NetWorth from "../Components/Dashboard/NetWorth";
 import Transactions from "../Components/Dashboard/Transactions";
 import DrawerComponent from "../Components/Drawer";
-import BudgetSetupWizard from "../Components/BudgetSetupWizard";
 
 const defaultTheme = createTheme();
 
@@ -36,12 +35,9 @@ interface DashBoardResponse {
   recentTransactions: Transaction[];
 }
 
-// Backdrop component from MUI for loading? or progress
-
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [setupWindowOpen, setSetupWizardOpen] = useState(false);
 
   // get the user from the context
   const userContext = useContext(UserContext);
@@ -86,14 +82,6 @@ const Dashboard: React.FC = () => {
   // handle open and close of the drawer
   const toggleDrawer = () => {
     setOpen(!open);
-  };
-
-  // handle open and close of the budget setup wizard
-  // const handleOpenBudgetWizard = () => {
-  //   setSetupWizardOpen(true);
-  // };
-  const handleCloseBudgetWizard = () => {
-    setSetupWizardOpen(false);
   };
 
   // fetch the dashboard data on mount and when the user's account is linked
@@ -154,11 +142,6 @@ const Dashboard: React.FC = () => {
                     }}
                   >
                     <h1>Budget Widget in progress</h1>
-                    <BudgetSetupWizard
-                      userEmail={user?.email}
-                      open={setupWindowOpen}
-                      onClose={handleCloseBudgetWizard}
-                    />
                   </Paper>
                 </Grid>
                 {/* Net Worth */}
