@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -7,29 +7,23 @@ import {
   TextField,
   Button,
   Avatar,
-  Snackbar,
-  SnackbarCloseReason,
-  Alert,
 } from "@mui/material";
+
 import { UserContext } from "../Context/UserContext";
+import { useSnackbar } from "../Context/SnackbarContext";
+import { useAxios } from "../Hooks/useAxios";
 import Copyright from "../Components/Copyright";
 
-const register = async (name: string, email: string, password: string) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ name, email, password }),
-  });
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
 
-  if (!response.ok) {
-    const json = await response.json();
-    throw new Error(json.error);
-  }
-
-  return response.json();
-};
+interface RegisterResponse {
+  name: string;
+  email: string;
+}
 
 const RegistrationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,35 +31,47 @@ const RegistrationPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false);
 
+  const { showSnackbar } = useSnackbar();
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("RegistrationPage must be used within a UserProvider");
   }
   const { setUser } = context;
 
-  // Snackbar close handler
-  const handleClose = (
-    _event: React.SyntheticEvent<unknown, Event> | Event,
-    reason: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    RegisterRequest,
+    RegisterResponse
+  >({
+    method: "POST",
+    url: "/register",
+    body: {
+      name,
+      email,
+      password,
+    },
+  });
 
   // Ensure all fields are filled out
   const validateForm = () => {
-    if (
-      typeof name !== "string" ||
-      typeof email !== "string" ||
-      typeof password !== "string"
-    ) {
-      setError("Please fill out all fields");
-      setOpen(true);
+    if (typeof name !== "string" || name === "") {
+      showSnackbar("Please provide a name", "error");
+      return false;
+    }
+    if (typeof email !== "string" || email === "") {
+      showSnackbar("Please provide an email", "error");
+      return false;
+    }
+    if (typeof password !== "string" || password === "") {
+      showSnackbar("Please provide a password", "error");
+      return false;
+    }
+    if (typeof confirmPassword !== "string" || confirmPassword === "") {
+      showSnackbar("Please confirm your password", "error");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      showSnackbar("Passwords do not match", "error");
       return false;
     }
     return true;
@@ -74,34 +80,25 @@ const RegistrationPage: React.FC = () => {
   // Handle register request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!validateForm()) return;
+    await execute();
+  };
 
-    if (confirmPassword !== password) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const userData = await register(name, email, password);
-
+  useEffect(() => {
+    if (response !== null) {
       const user = {
-        name: userData.name,
-        email: userData.email,
+        name: response.data.name,
+        email: response.data.email,
         numItems: 0,
       };
       setUser(user);
       sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unknown Error");
-      }
-      setOpen(true);
     }
-  };
+    if (axiosErrorMessage !== null) {
+      showSnackbar(axiosErrorMessage, "error");
+    }
+  }, [response, showSnackbar, axiosErrorMessage, setUser, navigate]);
 
   return (
     <Container
@@ -186,20 +183,11 @@ const RegistrationPage: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </Button>
+          <a href="/login">Go Back</a>
         </Box>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );

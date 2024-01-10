@@ -1,3 +1,4 @@
+import { useContext, useState } from "react";
 import {
   Box,
   CssBaseline,
@@ -13,7 +14,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { Settings, Add } from "@mui/icons-material";
-import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
@@ -27,7 +27,7 @@ const AccountsPage: React.FC = () => {
   }
 
   // const { user } = context;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };

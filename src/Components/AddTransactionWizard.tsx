@@ -1,30 +1,44 @@
-import React, { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { Dayjs } from "dayjs";
 import { primaryFinanceCategories } from "../utils/financeCategories";
 import {
+  Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
-  TextField,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import axios from "axios";
-import { Dayjs } from "dayjs";
+import { UserContext } from "../Context/UserContext";
+import { useSnackbar } from "../Context/SnackbarContext";
+import { useAxios } from "../Hooks/useAxios";
 
 interface AddTransactionWizardProps {
-  userEmail: string | undefined;
   open: boolean;
   onClose: () => void;
 }
 
+interface AddTransactionRequest {
+  email: string | undefined;
+  merchant_name: string;
+  category: string;
+  account: string;
+  amount: number;
+  date: string | undefined;
+}
+
+interface AddTransactionResponse {
+  message: string;
+}
+
 // User can manually input a transaction by filling out the form, which is then sent to the backend and transaction is added to the user's transactions
 const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
-  userEmail,
   open,
   onClose,
 }) => {
@@ -33,27 +47,44 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
   const [account, setAccount] = useState("");
   const [amount, setAmount] = useState(0);
   const [date, setDate] = useState<Dayjs | null>(null);
+  const { showSnackbar } = useSnackbar();
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("LoginPage must be used within a UserProvider");
+  }
+  const { user } = context;
+
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    AddTransactionRequest,
+    AddTransactionResponse
+  >({
+    method: "POST",
+    url: "/add_manual_transaction",
+    body: {
+      email: user?.email,
+      merchant_name: merchant,
+      category: category,
+      account: account,
+      amount: amount,
+      date: date?.format("YYYY-MM-DD"),
+    },
+  });
 
   // Sends the user's budget to the backend
   const handleFinish = async () => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/add_manual_transaction`,
-        {
-          email: userEmail,
-          merchant_name: merchant,
-          category: category,
-          account: account,
-          amount: amount,
-          date: date?.format("YYYY-MM-DD"),
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-    onClose();
+    await execute();
   };
+
+  useEffect(() => {
+    if (axiosErrorMessage) {
+      showSnackbar(axiosErrorMessage, "error");
+    }
+    if (response?.data.message === "Success") {
+      showSnackbar("Transaction added successfully", "success");
+      onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response, axiosErrorMessage, onClose]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -78,8 +109,10 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
             label="Category"
             onChange={(e) => setCategory(e.target.value)}
           >
-            {primaryFinanceCategories.map((category) => (
-              <MenuItem value={category}>{category}</MenuItem>
+            {primaryFinanceCategories.map((category, index) => (
+              <MenuItem key={index} value={category}>
+                {category}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -103,8 +136,12 @@ const AddTransactionWizard: React.FC<AddTransactionWizardProps> = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleFinish}>Add</Button>
+        <Button onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button onClick={handleFinish} disabled={loading}>
+          {loading ? <CircularProgress size={24} /> : "Finish"}
+        </Button>
       </DialogActions>
     </Dialog>
   );

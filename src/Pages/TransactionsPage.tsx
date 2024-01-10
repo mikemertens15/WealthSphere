@@ -1,5 +1,9 @@
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   Box,
+  CircularProgress,
+  Container,
   CssBaseline,
   ThemeProvider,
   Paper,
@@ -17,36 +21,46 @@ import {
   createTheme,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
 import { UserContext } from "../Context/UserContext";
+import { useAxios } from "../Hooks/useAxios";
+import Transaction from "../utils/transaction";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
 import AddTransactionWizard from "../Components/AddTransactionWizard";
 
 const defaultTheme = createTheme();
 
-interface Transaction {
-  transaction_id: string;
-  amount: number;
-  account: string;
-  category: string;
-  date: string;
-  merchant_name: string;
+interface TransactionsRequest {
+  email: string;
+}
+
+interface TransactionsResponse {
+  transactions: Transaction[];
 }
 
 // *Most of this logic should be moved to a separate hook or something*
 const TransactionsPage: React.FC = () => {
-  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-  const [open, setOpen] = React.useState(false);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [open, setOpen] = useState(false);
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("Budget must be within a userProvider");
   }
   const { user } = context;
+  const email = user?.email;
+
+  const params = useMemo(() => ({ email }), [email]);
+
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    TransactionsRequest,
+    TransactionsResponse
+  >({
+    method: "GET",
+    url: "/get_transactions",
+    params,
+  });
 
   const handleOpenWizard = () => {
     setIsWizardOpen(true);
@@ -72,17 +86,8 @@ const TransactionsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(
-        `${import.meta.env.VITE_API_URL}/get_transactions?email=${user?.email}`
-      )
-      .then((res) => {
-        setTransactions(res.data.transactions);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [user?.email]);
+    if (user?.email) execute();
+  }, [user?.email, execute]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -103,47 +108,65 @@ const TransactionsPage: React.FC = () => {
           }}
         >
           <Toolbar />
-          <Paper>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Merchant</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell>Account</TableCell>
-                    <TableCell>Amount</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactions &&
-                    transactions
+          {loading && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+          {response && (
+            <Paper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Merchant</TableCell>
+                      <TableCell>Category</TableCell>
+                      <TableCell>Account</TableCell>
+                      <TableCell>Amount</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {response.data.transactions
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((transaction) => (
-                        <TableRow key={transaction.transaction_id}>
+                        <TableRow key={transaction._id}>
                           <TableCell>{transaction.date}</TableCell>
                           <TableCell>{transaction.merchant_name}</TableCell>
                           <TableCell>{transaction.category}</TableCell>
-                          <TableCell>{transaction.account}</TableCell>
+                          <TableCell>{transaction.accountName}</TableCell>
                           <TableCell>{`$${transaction.amount}`}</TableCell>
                         </TableRow>
                       ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 50]}
-              component="div"
-              count={transactions.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleChangeRowPerPage}
-            />
-          </Paper>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={response.data.transactions.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleChangeRowPerPage}
+              />
+            </Paper>
+          )}
+          {axiosErrorMessage && (
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Alert severity="error">{axiosErrorMessage}</Alert>
+            </Container>
+          )}
           <SpeedDial
             ariaLabel="Add Transaction"
             icon={<SpeedDialIcon />}
@@ -157,7 +180,6 @@ const TransactionsPage: React.FC = () => {
             />
           </SpeedDial>
           <AddTransactionWizard
-            userEmail={user?.email}
             open={isWizardOpen}
             onClose={handleCloseWizard}
           />

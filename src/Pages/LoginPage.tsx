@@ -1,9 +1,6 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Alert,
-  Snackbar,
-  SnackbarCloseReason,
   Container,
   Box,
   Typography,
@@ -15,55 +12,53 @@ import {
 } from "@mui/material";
 
 import { UserContext } from "../Context/UserContext";
+import { useSnackbar } from "../Context/SnackbarContext";
+
 import Copyright from "../Components/Copyright";
+import { useAxios } from "../Hooks/useAxios";
 
-// Handles the login request to the backend
-const login = async (email: string, password: string) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 
-  if (!response.ok) {
-    const json = await response.json();
-    throw new Error(json.error);
-  }
-
-  return response.json();
-};
+interface LoginResponse {
+  name: string;
+  email: string;
+}
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false);
 
+  const { showSnackbar } = useSnackbar();
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("LoginPage must be used within a UserProvider");
   }
   const { setUser } = context;
 
-  // Snackbar close handler
-  const handleClose = (
-    _event: React.SyntheticEvent<unknown, Event> | Event,
-    reason: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
+  const { response, axiosErrorMessage, loading, execute } = useAxios<
+    LoginRequest,
+    LoginResponse
+  >({
+    method: "POST",
+    url: "/login",
+    body: {
+      email,
+      password,
+    },
+  });
 
   // Ensure all fields are filled out
   const validateForm = () => {
-    if (typeof email !== "string" || typeof password !== "string") {
-      setError("Please fill out all fields");
-      setOpen(true);
+    if (typeof email !== "string" || email === "") {
+      showSnackbar("Please provide an email", "error");
+      return false;
+    }
+    if (typeof password !== "string" || password === "") {
+      showSnackbar("Please provide a password", "error");
       return false;
     }
     return true;
@@ -72,29 +67,26 @@ const LoginPage: React.FC = () => {
   // Handle login request and either set user or display error
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!validateForm()) return;
+    await execute();
+  };
 
-    try {
-      const userData = await login(email, password);
-
+  useEffect(() => {
+    if (response !== null) {
       const user = {
-        name: userData.name,
-        email: userData.email,
+        name: response.data.name,
+        email: response.data.email,
         numItems: 0,
       };
       setUser(user);
       sessionStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Unknown Error");
-      }
-      setOpen(true);
     }
-  };
+    if (axiosErrorMessage !== null) {
+      showSnackbar(axiosErrorMessage, "error");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response, axiosErrorMessage, setUser, navigate]);
 
   return (
     <Container
@@ -155,7 +147,7 @@ const LoginPage: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </Button>
           <Grid container>
             <Grid item xs>
@@ -171,16 +163,6 @@ const LoginPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );

@@ -1,3 +1,5 @@
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import {
   Box,
   CssBaseline,
@@ -17,12 +19,9 @@ import {
   DialogActions,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Context/UserContext";
 import AppBarComponent from "../Components/AppBar";
 import DrawerComponent from "../Components/Drawer";
-import usePostData from "../Hooks/usePostData";
-import axios from "axios";
 
 interface Bill {
   name: string;
@@ -41,7 +40,6 @@ const BillsPage: React.FC = () => {
   const { user } = context;
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const { postData } = usePostData("add_new_bill", user?.email);
   const [bills, setBills] = useState<Bill[]>([]);
   const [billName, setBillName] = useState("");
   const [billAmount, setBillAmount] = useState("");
@@ -60,7 +58,6 @@ const BillsPage: React.FC = () => {
   };
 
   const handleSaveBill = () => {
-    postData({ name: billName, amount: billAmount, dueDate: billDueDate });
     handleCloseDialog();
   };
 
