@@ -44,7 +44,7 @@ export function useAxios<Req = unknown, Res = unknown, Params = unknown>({
       } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response) {
-            setAxiosErrorMessage(err.response.data.error);
+            setAxiosErrorMessage(err.response.data.message);
           }
         } else if (err instanceof Error) {
           setAxiosErrorMessage(err.message);
