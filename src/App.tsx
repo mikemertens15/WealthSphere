@@ -18,7 +18,6 @@ import Dashboard from "./Pages/Dashboard";
 import BudgetPage from "./Pages/BudgetPage";
 import React from "react";
 import TransactionsPage from "./Pages/TransactionsPage";
-import BalancesPage from "./Pages/BalancesPage";
 import InvestmentsPage from "./Pages/InvestmentsPage";
 import DebtsPage from "./Pages/DebtsPage";
 import BillsPage from "./Pages/BillsPage";
@@ -56,7 +55,6 @@ function App() {
                       path="/transactions"
                       element={<TransactionsPage />}
                     />
-                    <Route path="/balances" element={<BalancesPage />} />
                     <Route path="/investments" element={<InvestmentsPage />} />
                     <Route path="/debts" element={<DebtsPage />} />
                     <Route path="/bills" element={<BillsPage />} />

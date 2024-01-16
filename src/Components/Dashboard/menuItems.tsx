@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import {
   Dashboard,
-  AccountBalance,
   PointOfSale,
   AttachMoney,
   ShowChart,
@@ -33,12 +32,6 @@ export const menuItems = (
         <PointOfSale />
       </ListItemIcon>
       <ListItemText primary="Transactions" />
-    </ListItemButton>
-    <ListItemButton component={Link} to="/balances">
-      <ListItemIcon>
-        <AccountBalance />
-      </ListItemIcon>
-      <ListItemText primary="Balances" />
     </ListItemButton>
     <ListItemButton component={Link} to="/investments">
       <ListItemIcon>
