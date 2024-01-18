@@ -20,7 +20,7 @@ import {
   SpeedDialIcon,
   SpeedDialAction,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { SmartToy, Create } from "@mui/icons-material";
 import { UserContext } from "../Context/UserContext";
 import { useAxios } from "../Hooks/useAxios";
 import Account from "../utils/account";
@@ -60,6 +60,8 @@ const AccountsPage: React.FC = () => {
     url: "/get_accounts_page_data",
     params,
   });
+
+  const openPlaidLink = () => {};
 
   const handleOpenWizard = () => {
     setIsWizardOpen(true);
@@ -133,7 +135,7 @@ const AccountsPage: React.FC = () => {
                         <TableRow key={account._id}>
                           <TableCell>{account.accountName}</TableCell>
                           <TableCell>{account.accountType}</TableCell>
-                          <TableCell>{account.currentBalance}</TableCell>
+                          <TableCell>${account.balances.current}</TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -155,15 +157,16 @@ const AccountsPage: React.FC = () => {
               <Alert severity="error">{axiosErrorMessage}</Alert>
             </Container>
           )}
-          <SpeedDial
-            ariaLabel="Add Account"
-            icon={<SpeedDialIcon />}
-            onClick={handleOpenWizard}
-          >
+          <SpeedDial ariaLabel="Add Account" icon={<SpeedDialIcon />}>
             <SpeedDialAction
-              icon={<Add />}
+              icon={<Create />}
               tooltipTitle="Add Account"
               onClick={handleOpenWizard}
+            />
+            <SpeedDialAction
+              icon={<SmartToy />}
+              tooltipTitle="Link with Plaid"
+              onClick={openPlaidLink}
             />
           </SpeedDial>
           <AddAccountWizard open={isWizardOpen} onClose={handleCloseWizard} />
