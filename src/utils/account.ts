@@ -2,7 +2,10 @@ export default interface Account {
   _id: string;
   accountName: string;
   accountType: string;
-  currentBalance: number;
+  balances: {
+    available: number;
+    current: number;
+  };
   availableBalance: number | null;
   plaidItem: string | null;
 }

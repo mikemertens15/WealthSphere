@@ -23,9 +23,9 @@ interface AddAccountWizardProps {
 
 interface AddAccountRequest {
   email: string | undefined;
-  account_name: string;
-  account_type: string;
-  account_balance: number;
+  accountName: string;
+  accountType: string;
+  accountBalance: number;
 }
 
 interface AddAccountResponse {
@@ -54,9 +54,9 @@ const AddAccountWizard: React.FC<AddAccountWizardProps> = ({
     url: "/add_manual_account",
     body: {
       email: user?.email,
-      account_name: accountName,
-      account_type: accountType,
-      account_balance: accountBalance,
+      accountName: accountName,
+      accountType: accountType,
+      accountBalance: accountBalance,
     },
   });
 
@@ -103,7 +103,7 @@ const AddAccountWizard: React.FC<AddAccountWizardProps> = ({
           <TextField
             label="Account Balance"
             value={accountBalance}
-            onChange={(e) => setAccountBalance(parseInt(e.target.value))}
+            onChange={(e) => setAccountBalance(parseFloat(e.target.value))}
           />
         </FormControl>
       </DialogContent>
