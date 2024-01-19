@@ -1,12 +1,8 @@
 import * as React from "react";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Title from "./Title";
-
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
-
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 interface NetWorthProps {
   netWorth: number | null;
 }
@@ -25,9 +21,9 @@ const NetWorth: React.FC<NetWorthProps> = ({ netWorth }) => {
         last updated here?
       </Typography>
       <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View accounts
-        </Link>
+        <Button color="primary" variant="text">
+          <Link to="/accounts">View All Accounts</Link>
+        </Button>
       </div>
     </React.Fragment>
   );
